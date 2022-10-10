@@ -1,4 +1,4 @@
-#This is the ui portion of rshiny code
+#This is the ui portion of the rshiny code is called out
 
 ui <- htmlTemplate(
   filename = "www/index.html",

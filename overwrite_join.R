@@ -1,3 +1,7 @@
+# Name:Harsha
+# Date:10/10/2022
+#Purpose: Removing duplicate columns and create labels.
+
 overwrite_join <- function(x, y, by = NULL){
   bycols <- which(colnames(x) %in% by) 
   commoncols <- which(colnames(x) %in% colnames(y))

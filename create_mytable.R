@@ -1,3 +1,5 @@
+#This is used to create a table of primary variables, secondary variables, state and county
+
 create_mytable <- function(all_data, sel_data, map_level, prim_var) {
   if (map_level == 1) {
     curr_gid <- "GID_1"

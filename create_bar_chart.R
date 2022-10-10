@@ -1,4 +1,6 @@
-#This code is used to create the bar chart visual in rshiny
+# Name:Harsha
+# Date:10/10/2022
+#Purpose: This code is used to create the bar chart visual in rshiny
 
 create_bar_chart <- function(df, prim_var) {
   

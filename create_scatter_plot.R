@@ -1,3 +1,5 @@
+#This is used to create a scatter plot visual in rshiny
+
 create_scatter_plot <- function(df, prim_var, sec_var) {
   validate(
     need(nrow(df) > 0, "Select regions on the map to add their values to this graph.")

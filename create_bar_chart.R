@@ -1,3 +1,5 @@
+#This code is used to create the bar chart visual in rshiny
+
 create_bar_chart <- function(df, prim_var) {
   
   validate(

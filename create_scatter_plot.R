@@ -1,4 +1,6 @@
-#This is used to create a scatter plot visual in rshiny
+# Name:Harsha
+# Date:10/10/2022
+#purpose:This is used to create a scatter plot visual in rshiny
 
 create_scatter_plot <- function(df, prim_var, sec_var) {
   validate(

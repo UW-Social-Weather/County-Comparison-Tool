@@ -1,4 +1,6 @@
-#This is used to create the line graph visual in RShiny
+# Name:Harsha
+# Date:10/10/2022
+# Purpose :This is used to create the line graph visual in RShiny
 
 create_line_graph <- function(data, curr_sel_data, prim_var, sec_var) {
   # filter the data to get only the currently selected data

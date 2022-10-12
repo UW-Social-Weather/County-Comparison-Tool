@@ -3,7 +3,7 @@ library(tibble)
 library(stringr)
 library(dplyr)
 # check if all files have the same columns...
-## loop 
+#Purpose: loop ; read the files and sheets; store it in a data frame df
 files <- list.files(path="data/raw", pattern="*.xls", full.names=TRUE, recursive=FALSE)
 reference_header <- unlist(read.csv2("data/ref_header.csv", stringsAsFactors = FALSE))
 
@@ -28,6 +28,7 @@ for (x in 202:length(files)) {
     current_col <- file[1, column_index]
     
     # TODO move renaming to later
+    #remove columns with significant nas. (YPLL data had significant nas)
     if(is.na(current_col)) {
       
     } else if(current_col == "Preventable hospital stays (Ambulatory Care Sensitive Conditions)") {
@@ -49,6 +50,8 @@ for (x in 202:length(files)) {
   file[1, 1] <- "FIPS"		
   file[1, 2] <- "State"
   file[1, 3] <- "County"
+  
+  #Ensuring uniformity and readability of the headers
   
   file <- file[, !is.na(unlist(file[1, ]))]
   

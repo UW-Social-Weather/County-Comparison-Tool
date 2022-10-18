@@ -1,7 +1,13 @@
+# File purpose: File which cleans Wisconsin County Health Ranking Data 
+# Created by: Harsha 
+# Last updated: October 18, 2022
+
+# set up
 library(readxl)
 library(tibble)
 library(stringr)
 library(dplyr)
+
 # check if all files have the same columns...
 #Purpose: loop ; read the files and sheets; store it in a data frame df
 files <- list.files(path="data/raw", pattern="*.xls", full.names=TRUE, recursive=FALSE)

@@ -9,7 +9,7 @@ library(stringr)
 library(dplyr)
 
 # 2022 data doesn't have Z-Scores
-reference_headers <- unlist(read.csv2("data/ref_header_2022.csv", stringsAsFactors = FALSE))
+reference_headers <- unlist(read.csv2("data/ref_header_updated.csv", stringsAsFactors = FALSE))
 
 data_2022 <- suppressMessages(read_excel("data/2022_wchrr_data.xlsx", sheet = "Ranked Measure Data", col_names = FALSE))
 

@@ -89,8 +89,10 @@ if(!all(reference_headers %in% headers)) {
 } else {
   data_2022 <- data_2022 %>% select(all_of(reference_headers))
   
+  # add year column
   data_2022 <- add_column(data_2022, year = 2022, .before = 1)
 
+  # round data
   data_2022[,5:dim(data_2022)[2]] <- sapply(data_2022[,5:dim(data_2022)[2]], as.numeric)
   data_2022[,5:dim(data_2022)[2]] <- sapply(data_2022[,5:dim(data_2022)[2]], round, digits = 2)
 
@@ -98,7 +100,7 @@ if(!all(reference_headers %in% headers)) {
 reference_headers[1:3] <- c("FIPS", "State", "NAME_2")
 names(data_2022) <- c("year", reference_headers)
 
-
+# more renaming - from other cleaning script 
 data_2022 <- data_2022 %>% rename("YPLL Rate" = "Premature death:YPLL Rate", 
                     "YPLL Rate-CIL" = "Premature death:95% CI - Low", 
                     "YPLL Rate-CIH" = "Premature death:95% CI - High", 

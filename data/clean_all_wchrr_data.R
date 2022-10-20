@@ -3,6 +3,11 @@
 # Created: October 19, 2022
 # Last updated: October 19, 2022
 
+
+### Note: still need to incorporate diabetes measures. 
+### This does not clean COVID measures as of now since they are in another sheet. 
+
+
 # set up
 library(readxl)
 library(tibble)

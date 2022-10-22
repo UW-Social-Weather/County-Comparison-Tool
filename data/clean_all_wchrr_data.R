@@ -4,7 +4,7 @@
 # Last updated: October 19, 2022
 
 
-### Note: still need to incorporate diabetes measures. 
+### Note: Diabetes measures are a work in progress - still troubleshooting those  
 ### This does not clean COVID measures as of now since they are in another sheet. 
 
 
@@ -86,10 +86,8 @@ for (x in 1:length(files)) {
     str_replace("Sexually transmitted infections:Chlamydia Rate", "Sexually transmitted infections:Chlamydia Incidence") %>% 
     str_replace("Chlamydia rate:Cases", "Sexually transmitted infections:# Chlamydia Cases") %>% 
     str_replace("Chlamydia rate:Rates per 100,000", "Sexually transmitted infections:Chlamydia Incidence") %>% 
-    
     str_replace("Sexually transmitted infections:Cases", "Sexually transmitted infections:# Chlamydia Cases") %>% 
     str_replace("Sexually transmitted infections:Rates per 100,000", "Sexually transmitted infections:Chlamydia Incidence") %>% 
-    
     str_replace("Primary care physicians:PCP", "Primary care physicians:# PCP") %>% 
     str_replace("Primary care physicians:# Primary Care Physicians", "Primary care physicians:# PCP") %>% 
     str_replace("Preventable hospital stays:Preventable Hosp. Rate", "Preventable hospital stays:ACSC Rate") %>% 
@@ -107,8 +105,10 @@ for (x in 1:length(files)) {
     str_replace("Driving alone to work:Workers", "Driving alone to work:# Workers") %>%
     str_replace("Long commute - driving alone:Long Commute - Drives Alone", "Long commute - driving alone:% Long Commute - Drives Alone") %>%
     str_replace("Long commute - driving alone:Workers who Drive Alone", "Long commute - driving alone:# Workers who Drive Alone") %>%
-    str_replace("Severe housing problems:# Household with Severe Problems" , "Severe housing problems:# Households with Severe Problems" )
-  
+    str_replace("Severe housing problems:# Household with Severe Problems" , "Severe housing problems:# Households with Severe Problems") %>%  
+    str_replace("Diabetic monitoring:% Receiving HbA1c", "Diabetic screening:% HbA1c") %>%
+    str_replace("Diabetic monitoring:95% CI - High" , "Diabetic screening:95% CI - High") %>%
+    str_replace("Diabetic monitoring:95% CI - Low", "Diabetic screening:95% CI - Low")
   
   
   #trim empty lines

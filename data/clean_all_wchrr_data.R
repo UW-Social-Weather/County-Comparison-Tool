@@ -13,9 +13,12 @@ library(readxl)
 library(tibble)
 library(stringr)
 library(dplyr)
+library(tidyverse)
 
 # Updated list of columns to keep 
-reference_header <- unlist(read.csv2("data/ref_header_updated.csv", stringsAsFactors = FALSE))
+reference_header <- unlist(read.csv2("data/ref_header_works.csv", stringsAsFactors = FALSE))
+# The version below is a work in progress - sorting out diabetes measures 
+# reference_header <- unlist(read.csv2("data/ref_header_updated.csv", stringsAsFactors = FALSE))
 
 ## Loop to read all files and sheets; store it in a data frame df
 
@@ -105,10 +108,10 @@ for (x in 1:length(files)) {
     str_replace("Driving alone to work:Workers", "Driving alone to work:# Workers") %>%
     str_replace("Long commute - driving alone:Long Commute - Drives Alone", "Long commute - driving alone:% Long Commute - Drives Alone") %>%
     str_replace("Long commute - driving alone:Workers who Drive Alone", "Long commute - driving alone:# Workers who Drive Alone") %>%
-    str_replace("Severe housing problems:# Household with Severe Problems" , "Severe housing problems:# Households with Severe Problems") %>%  
-    str_replace("Diabetic monitoring:% Receiving HbA1c", "Diabetic screening:% HbA1c") %>%
-    str_replace("Diabetic monitoring:95% CI - High" , "Diabetic screening:95% CI - High") %>%
-    str_replace("Diabetic monitoring:95% CI - Low", "Diabetic screening:95% CI - Low")
+    str_replace("Severe housing problems:# Household with Severe Problems" , "Severe housing problems:# Households with Severe Problems") #%>%  
+    # str_replace("Diabetic monitoring:% Receiving HbA1c", "Diabetic screening:% HbA1c") %>%
+    # str_replace("Diabetic monitoring:95% CI - High" , "Diabetic screening:95% CI - High") %>%
+    # str_replace("Diabetic monitoring:95% CI - Low", "Diabetic screening:95% CI - Low")
   
   
   #trim empty lines

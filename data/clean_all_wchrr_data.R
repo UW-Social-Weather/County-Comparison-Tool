@@ -41,6 +41,11 @@ for (x in 1:length(files)) {
   } else {
     print(paste("sheet fail", sheets))
   }
+  # if("Measure Data" %in% sheets) {
+  #   fileAdd <- suppressMessages(read_excel(file_name, sheet = "Additional Measure Data", col_names = FALSE))
+  # } else {
+  #   print(paste("sheet fail", sheets))
+  # }
   
   # adding measure section name to each column - same as old cleaning script 
   previous_col <- ""
@@ -71,11 +76,40 @@ for (x in 1:length(files)) {
   file[1, 2] <- "State"
   file[1, 3] <- "County"
   
+  # ## Repeat for additional measure data
+  # previous_col <- ""
+  # for(column_index in 4:ncol(fileAdd)) {
+  #   current_col <- fileAdd[1, column_index]
+  #   
+  #   if(is.na(current_col)) {
+  #     
+  #   } else if(current_col == "Preventable hospital stays (Ambulatory Care Sensitive Conditions)") {
+  #     current_col <- "Preventable hospital stays"
+  #   } else if(current_col == "Premature death (Years of Potential Life Lost)") {
+  #     current_col <- "Premature death"
+  #   } else if(current_col == "Some college (post-secondary education)") {
+  #     current_col <- "Some college"
+  #   } else if(current_col == "") {
+  #     current_col <- NA
+  #   }   
+  #   fileAdd[1, column_index] <- current_col
+  #   
+  #   if(is.na(current_col)) {
+  #     fileAdd[1, column_index] <- previous_col
+  #   }
+  #   
+  #   previous_col <- fileAdd[1, column_index]
+  # }
+  # 
+  # fileAdd[1, 1] <- "FIPS"		
+  # fileAdd[1, 2] <- "State"
+  # fileAdd[1, 3] <- "County"
+  
   # Standardizing headers
   ### note: these will likely need to be renamed (simpler, no spaces/special characters)
   
   file <- file[, !is.na(unlist(file[1, ]))]
-  
+
   header <- str_c(unlist(file[1, ]), ":", unlist(file[2, ]))
   header[1:3] <- c("FIPS", "State", "County")
   
@@ -112,17 +146,35 @@ for (x in 1:length(files)) {
     # str_replace("Diabetic monitoring:% Receiving HbA1c", "Diabetic screening:% HbA1c") %>%
     # str_replace("Diabetic monitoring:95% CI - High" , "Diabetic screening:95% CI - High") %>%
     # str_replace("Diabetic monitoring:95% CI - Low", "Diabetic screening:95% CI - Low")
-  
-  
+ 
+   
   #trim empty lines
   file <- file[!is.na(file[,1]),]
   
   # remove header lines
   file <- file[-c(1:2), ]
   
-  
+  # add clean column names 
   names(file) <- header
   
+  # ## Repeat for the additional measure data 
+  # fileAdd <- fileAdd[, !is.na(unlist(fileAdd[1, ]))]
+  # 
+  # headerAdd <- str_c(unlist(fileAdd[1, ]), ":", unlist(fileAdd[2, ]))
+  # headerAdd[1:3] <- c("FIPS", "State", "County")
+  # 
+  # fileAdd <- fileAdd[!is.na(fileAdd[,1]),]
+  # 
+  # fileAdd <- fileAdd[-c(1:2), ]
+  # 
+  # names(fileAdd) <- headerAdd
+  # 
+  # 
+  # # Merge the two data sheets
+  # file <- merge(file, fileAdd, by=c("FIPS", "State", "County"))
+  # header <- append(header, headerAdd)
+  
+  # Trim columns to keep measures of interest 
   if(!all(reference_header %in% header)) {
     print("header fail")
   } else {
@@ -130,7 +182,6 @@ for (x in 1:length(files)) {
     
     year <- 2009+x
     file <- add_column(file, year = year, .before = 1)
-    
     
     file[,5:dim(file)[2]] <- sapply(file[,5:dim(file)[2]], as.numeric)
     file[,5:dim(file)[2]] <- sapply(file[,5:dim(file)[2]], round, digits = 2)

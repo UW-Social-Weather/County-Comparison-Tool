@@ -205,7 +205,7 @@ for (x in 1:length(files)) {
 }
 df[,5:dim(df)[2]] <- sapply(df[,5:dim(df)[2]], as.numeric)
 
-reference_header[1:3] <- c("FIPS", "State", "NAME_2")
+reference_header[1:3] <- c("FIPS", "State", "County")
 names(df) <- c("year", reference_header)
 
 ### note: these will likely need to be renamed (simpler, no spaces/special characters)
@@ -240,14 +240,14 @@ df <- df %>% rename("YPLL Rate" = "Premature death:YPLL Rate",
 # still getting an error that "object 'us_election_states' not found"
 # may need to update this later 
 df <- df %>% left_join(us_election_states %>% select(State, ST))
-df <- df %>% relocate(ST, .before = NAME_2)
+df <- df %>% relocate(ST, .before = County)
 
 # saved a copy of this cleaned data without the two rows above 
 # write.csv2(df, "data/clean/all_wchrr.csv", row.names = FALSE)
 #
 # 
-# states <- df %>% filter(is.na(NAME_2))
+# states <- df %>% filter(is.na(County))
 # write.csv2(states, "data/clean/us_health_states.csv", row.names = FALSE)
 # 
-# counties <- df %>% filter(!is.na(NAME_2))
+# counties <- df %>% filter(!is.na(County))
 # write.csv2(counties, "data/clean/us_health_counties.csv", row.names = FALSE)

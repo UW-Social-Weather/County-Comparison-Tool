@@ -4,8 +4,8 @@
 # Last updated: October 19, 2022
 
 
-### Note: Diabetes measures are a work in progress - still troubleshooting those  
-### This does not clean COVID measures as of now since they are in another sheet. 
+### Note: Diabetes measures & life expectancy are a work in progress - still troubleshooting those  
+### This does not clean COVID measures as of now 
 
 
 # set up
@@ -17,7 +17,7 @@ library(tidyverse)
 
 # Updated list of columns to keep 
 reference_header <- unlist(read.csv2("data/ref_header_works.csv", stringsAsFactors = FALSE))
-# The version below is a work in progress - sorting out diabetes measures 
+# The version below is a work in progress - sorting out added measures 
 # reference_header <- unlist(read.csv2("data/ref_header_updated.csv", stringsAsFactors = FALSE))
 
 ## Loop to read all files and sheets; store it in a data frame df
@@ -29,11 +29,16 @@ files <- list.files(path="/Users/caitlindrover/Desktop/OneDrive - UW/county_comp
 df <- NULL
 
 for (x in 1:length(files)) {
+  # use this to troubleshoot
+  # x = 2
+  
   file_name <- files[x]
   
   print(file_name)
   
   sheets <- excel_sheets(file_name)
+  
+  # Read Ranked Measure Data sheet
   if("Measure Data" %in% sheets) {
     file <- suppressMessages(read_excel(file_name, sheet = "Measure Data", col_names = FALSE))
   } else if("Ranked Measure Data" %in% sheets) {
@@ -41,7 +46,8 @@ for (x in 1:length(files)) {
   } else {
     print(paste("sheet fail", sheets))
   }
-  # if("Measure Data" %in% sheets) {
+  # Read Additional Measure Data sheet
+  #   if("Additional Measure Data" %in% sheets) {
   #   fileAdd <- suppressMessages(read_excel(file_name, sheet = "Additional Measure Data", col_names = FALSE))
   # } else {
   #   print(paste("sheet fail", sheets))
@@ -80,9 +86,9 @@ for (x in 1:length(files)) {
   # previous_col <- ""
   # for(column_index in 4:ncol(fileAdd)) {
   #   current_col <- fileAdd[1, column_index]
-  #   
+  # 
   #   if(is.na(current_col)) {
-  #     
+  # 
   #   } else if(current_col == "Preventable hospital stays (Ambulatory Care Sensitive Conditions)") {
   #     current_col <- "Preventable hospital stays"
   #   } else if(current_col == "Premature death (Years of Potential Life Lost)") {
@@ -91,17 +97,17 @@ for (x in 1:length(files)) {
   #     current_col <- "Some college"
   #   } else if(current_col == "") {
   #     current_col <- NA
-  #   }   
+  #   }
   #   fileAdd[1, column_index] <- current_col
-  #   
+  # 
   #   if(is.na(current_col)) {
   #     fileAdd[1, column_index] <- previous_col
   #   }
-  #   
+  # 
   #   previous_col <- fileAdd[1, column_index]
   # }
   # 
-  # fileAdd[1, 1] <- "FIPS"		
+  # fileAdd[1, 1] <- "FIPS"
   # fileAdd[1, 2] <- "State"
   # fileAdd[1, 3] <- "County"
   
@@ -157,22 +163,27 @@ for (x in 1:length(files)) {
   # add clean column names 
   names(file) <- header
   
-  # ## Repeat for the additional measure data 
-  # fileAdd <- fileAdd[, !is.na(unlist(fileAdd[1, ]))]
-  # 
-  # headerAdd <- str_c(unlist(fileAdd[1, ]), ":", unlist(fileAdd[2, ]))
-  # headerAdd[1:3] <- c("FIPS", "State", "County")
-  # 
-  # fileAdd <- fileAdd[!is.na(fileAdd[,1]),]
-  # 
-  # fileAdd <- fileAdd[-c(1:2), ]
-  # 
-  # names(fileAdd) <- headerAdd
-  # 
-  # 
-  # # Merge the two data sheets
-  # file <- merge(file, fileAdd, by=c("FIPS", "State", "County"))
-  # header <- append(header, headerAdd)
+#   ## Repeat for the additional measure data
+#   fileAdd <- fileAdd[, !is.na(unlist(fileAdd[1, ]))]
+# 
+#   headerAdd <- str_c(unlist(fileAdd[1, ]), ":", unlist(fileAdd[2, ]))
+#   headerAdd[1:3] <- c("FIPS", "State", "County")
+# 
+#   headerAdd <- headerAdd %>% 
+#     str_replace("% diabetic:Diabetes", "Diabetes prevalence:% Diabetic") %>% 
+#     str_replace("% diabetic:95% CI - High", "Diabetes prevalence:95% CI - High") %>% 
+#     str_replace("% diabetic:95% CI - Low", "Diabetes prevalence:95% CI - Low") %>%
+#     str_replace("Diabetes:% diabetic", "Diabetes prevalence:% Diabetic") %>%
+#     str_replace("Diabetes prevalence:% Adults with Diabetes", "Diabetes prevalence:% Diabetic") 
+#   
+#   fileAdd <- fileAdd[!is.na(fileAdd[,1]),]
+#   fileAdd <- fileAdd[-c(1:2), ]
+#   names(fileAdd) <- headerAdd
+# 
+# 
+#   # Merge the two data sheets
+#   file <- merge(file, fileAdd, by=c("FIPS", "State", "County"))
+#   header <- append(header, headerAdd)
   
   # Trim columns to keep measures of interest 
   if(!all(reference_header %in% header)) {

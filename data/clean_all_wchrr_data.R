@@ -15,10 +15,12 @@ library(stringr)
 library(dplyr)
 library(tidyverse)
 
+# Old list of columns to keep 
+# reference_header <- unlist(read.csv2("data/ref_header_works.csv", stringsAsFactors = FALSE))
 # Updated list of columns to keep 
-reference_header <- unlist(read.csv2("data/ref_header_works.csv", stringsAsFactors = FALSE))
-# The version below is a work in progress - sorting out added measures 
-# reference_header <- unlist(read.csv2("data/ref_header_updated.csv", stringsAsFactors = FALSE))
+reference_header <- unlist(read.csv2("data/ref_header_updated.csv", stringsAsFactors = FALSE))
+# # The version below is a work in progress - sorting out additional measures 
+# reference_header_add <- unlist(read.csv2("data/ref_header_addmeasures.csv", stringsAsFactors = FALSE))
 
 ## Loop to read all files and sheets; store it in a data frame df
 
@@ -28,7 +30,7 @@ files <- list.files(path="/Users/caitlindrover/Desktop/OneDrive - UW/county_comp
 
 df <- NULL
 
-for (x in 1:length(files)) {
+for (x in 2:length(files)) {
   # use this to troubleshoot
   # x = 2
   
@@ -46,12 +48,15 @@ for (x in 1:length(files)) {
   } else {
     print(paste("sheet fail", sheets))
   }
+  
+  ### Work in progress ###
+  
   # Read Additional Measure Data sheet
-  #   if("Additional Measure Data" %in% sheets) {
-  #   fileAdd <- suppressMessages(read_excel(file_name, sheet = "Additional Measure Data", col_names = FALSE))
-  # } else {
-  #   print(paste("sheet fail", sheets))
-  # }
+    if("Additional Measure Data" %in% sheets) {
+    fileAdd <- suppressMessages(read_excel(file_name, sheet = "Additional Measure Data", col_names = FALSE))
+  } else {
+    print(paste("sheet fail", sheets))
+  }
   
   # adding measure section name to each column - same as old cleaning script 
   previous_col <- ""
@@ -82,34 +87,38 @@ for (x in 1:length(files)) {
   file[1, 2] <- "State"
   file[1, 3] <- "County"
   
-  # ## Repeat for additional measure data
-  # previous_col <- ""
-  # for(column_index in 4:ncol(fileAdd)) {
-  #   current_col <- fileAdd[1, column_index]
-  # 
-  #   if(is.na(current_col)) {
-  # 
-  #   } else if(current_col == "Preventable hospital stays (Ambulatory Care Sensitive Conditions)") {
-  #     current_col <- "Preventable hospital stays"
-  #   } else if(current_col == "Premature death (Years of Potential Life Lost)") {
-  #     current_col <- "Premature death"
-  #   } else if(current_col == "Some college (post-secondary education)") {
-  #     current_col <- "Some college"
-  #   } else if(current_col == "") {
-  #     current_col <- NA
-  #   }
-  #   fileAdd[1, column_index] <- current_col
-  # 
-  #   if(is.na(current_col)) {
-  #     fileAdd[1, column_index] <- previous_col
-  #   }
-  # 
-  #   previous_col <- fileAdd[1, column_index]
-  # }
-  # 
-  # fileAdd[1, 1] <- "FIPS"
-  # fileAdd[1, 2] <- "State"
-  # fileAdd[1, 3] <- "County"
+  
+  ### Work in progress ###
+  
+  ## Repeat for additional measure data
+  previous_col <- ""
+  for(column_index in 4:ncol(fileAdd)) {
+    current_col <- fileAdd[1, column_index]
+
+    if(is.na(current_col)) {
+
+    } else if(current_col == "Preventable hospital stays (Ambulatory Care Sensitive Conditions)") {
+      current_col <- "Preventable hospital stays"
+    } else if(current_col == "Premature death (Years of Potential Life Lost)") {
+      current_col <- "Premature death"
+    } else if(current_col == "Some college (post-secondary education)") {
+      current_col <- "Some college"
+    } else if(current_col == "") {
+      current_col <- NA
+    }
+    fileAdd[1, column_index] <- current_col
+
+    if(is.na(current_col)) {
+      fileAdd[1, column_index] <- previous_col
+    }
+
+    previous_col <- fileAdd[1, column_index]
+  }
+
+  fileAdd[1, 1] <- "FIPS"
+  fileAdd[1, 2] <- "State"
+  fileAdd[1, 3] <- "County"
+  
   
   # Standardizing headers
   ### note: these will likely need to be renamed (simpler, no spaces/special characters)
@@ -163,45 +172,55 @@ for (x in 1:length(files)) {
   # add clean column names 
   names(file) <- header
   
-#   ## Repeat for the additional measure data
-#   fileAdd <- fileAdd[, !is.na(unlist(fileAdd[1, ]))]
-# 
-#   headerAdd <- str_c(unlist(fileAdd[1, ]), ":", unlist(fileAdd[2, ]))
-#   headerAdd[1:3] <- c("FIPS", "State", "County")
-# 
-#   headerAdd <- headerAdd %>% 
-#     str_replace("% diabetic:Diabetes", "Diabetes prevalence:% Diabetic") %>% 
-#     str_replace("% diabetic:95% CI - High", "Diabetes prevalence:95% CI - High") %>% 
-#     str_replace("% diabetic:95% CI - Low", "Diabetes prevalence:95% CI - Low") %>%
-#     str_replace("Diabetes:% diabetic", "Diabetes prevalence:% Diabetic") %>%
-#     str_replace("Diabetes prevalence:% Adults with Diabetes", "Diabetes prevalence:% Diabetic") 
-#   
-#   fileAdd <- fileAdd[!is.na(fileAdd[,1]),]
-#   fileAdd <- fileAdd[-c(1:2), ]
-#   names(fileAdd) <- headerAdd
-# 
-# 
-#   # Merge the two data sheets
-#   file <- merge(file, fileAdd, by=c("FIPS", "State", "County"))
-#   header <- append(header, headerAdd)
+  ### Work in progress ###
+  
+  ## Repeat for the additional measure data
+  fileAdd <- fileAdd[, !is.na(unlist(fileAdd[1, ]))]
+
+  headerAdd <- str_c(unlist(fileAdd[1, ]), ":", unlist(fileAdd[2, ]))
+  headerAdd[1:3] <- c("FIPS", "State", "County")
+
+  headerAdd <- headerAdd %>%
+    str_replace("% diabetic:Diabetes", "Diabetes prevalence:% Diabetic") %>%
+    str_replace("% diabetic:95% CI - High", "Diabetes prevalence:95% CI - High") %>%
+    str_replace("% diabetic:95% CI - Low", "Diabetes prevalence:95% CI - Low") %>%
+    str_replace("Diabetes:% diabetic", "Diabetes prevalence:% Diabetic") %>%
+    str_replace("Diabetes:% Diabetic", "Diabetes prevalence:% Diabetic") %>%
+    str_replace("Diabetes prevalence:% Adults with Diabetes", "Diabetes prevalence:% Diabetic") %>%
+    str_replace("Diabetes:95% CI - High", "Diabetes prevalence:95% CI - High") %>%
+    str_replace("Diabetes:95% CI - Low", "Diabetes prevalence:95% CI - Low") 
+
+  fileAdd <- fileAdd[!is.na(fileAdd[,1]),]
+  fileAdd <- fileAdd[-c(1:2), ]
+  names(fileAdd) <- headerAdd
+
+
+  # Merge the two data sheets
+  file_bind <- merge(file, fileAdd, by=c("FIPS", "State", "County"))
+  headers <- append(header, headerAdd)
   
   # Trim columns to keep measures of interest 
-  if(!all(reference_header %in% header)) {
+  if(!all(reference_header %in% headers)) {
     print("header fail")
   } else {
-    file <- file %>% select(all_of(reference_header))
+    file_bind <- file_bind %>% select(all_of(reference_header))
+    names(file_bind) <- reference_header
     
     year <- 2009+x
-    file <- add_column(file, year = year, .before = 1)
+    file_bind <- add_column(file_bind, year = year, .before = 1)
     
-    file[,5:dim(file)[2]] <- sapply(file[,5:dim(file)[2]], as.numeric)
-    file[,5:dim(file)[2]] <- sapply(file[,5:dim(file)[2]], round, digits = 2)
+    file_bind[,5:dim(file_bind)[2]] <- sapply(file_bind[,5:dim(file_bind)[2]], as.numeric)
+    file_bind[,5:dim(file_bind)[2]] <- sapply(file_bind[,5:dim(file_bind)[2]], round, digits = 2)
   }
+  
+  ## uncomment to troubleshoot: check which headers didn't match 
+  # !(reference_header %in% headers)
+  
   
   #save_path <- paste0("data/clean/", file[2,1], file[2,3], ".csv")
   #write.csv2(file, save_path, row.names = FALSE)
   
-  df <- rbind(df, file)
+  df <- rbind(df, file_bind)
 }
 df[,5:dim(df)[2]] <- sapply(df[,5:dim(df)[2]], as.numeric)
 

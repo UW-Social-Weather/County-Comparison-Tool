@@ -1,12 +1,8 @@
 # File purpose: Clean and merge all Wisc CHRR Data 
 # Created by: Caitlin Drover 
 # Created: October 19, 2022
-# Last updated: October 19, 2022
 
-
-### Note: Diabetes measures & life expectancy are a work in progress - still troubleshooting those  
-### This does not clean COVID measures as of now 
-
+### Note: Life expectancy & COVID measures are a work in progress - still troubleshooting those  
 
 # set up
 library(readxl)
@@ -15,6 +11,26 @@ library(stringr)
 library(dplyr)
 library(tidyverse)
 
+## Note: need to adapt/update this ## 
+# # Set shared team drive and code repo dynamically
+# if (Sys.info()[7]=="caitlindrover"){
+#   if (Sys.info()[2]=='10 x64'){
+#     file_folder  <- 'C:/Users/frc2/UW/og_phi_global_vaccination_improvement_project - General/'
+#     code_dir <- 'C:/Users/frc2/Documents/uw-phi-vax/global_vac_index/'
+#   } else if (Sys.info()[2]=='Server x64'){
+#     file_folder  <- 'G:/Shared with Me/Merck Vaccine Improvement Index Project/'
+#     code_dir <- 'H:/uw-phi-vax/global_vac_index/'
+#   } else {
+#     file_folder  <- '/Volumes/GoogleDrive/.shortcut-targets-by-id/1P7ITMVB9x01fuYfHW8-uWogw4SpbuvwO/Merck Vaccine Improvement Index Project/'
+#     code_dir <- '~/Documents/uw-phi-vax/'
+#   } 
+# }
+
+# Create list of data files - directory path will need to be updated for each user
+files <- list.files(path="/Users/caitlindrover/Desktop/OneDrive - UW/county_comparison_tool/data/raw_data/wisconsin_chrr", 
+                    full.names=TRUE, recursive=FALSE)
+
+
 # Old list of columns to keep 
 # reference_header <- unlist(read.csv2("data/ref_header_works.csv", stringsAsFactors = FALSE))
 # Updated list of columns to keep 
@@ -22,11 +38,8 @@ reference_header <- unlist(read.csv2("data/ref_header_updated.csv", stringsAsFac
 # # The version below is a work in progress - sorting out additional measures 
 # reference_header_add <- unlist(read.csv2("data/ref_header_addmeasures.csv", stringsAsFactors = FALSE))
 
-## Loop to read all files and sheets; store it in a data frame df
 
-# Directory path will need to be updated for each user
-files <- list.files(path="/Users/caitlindrover/Desktop/OneDrive - UW/county_comparison_tool/data/raw_data/wisconsin_chrr", 
-                    full.names=TRUE, recursive=FALSE)
+## Loop to read all files and sheets; store it in a data frame df
 
 df <- NULL
 

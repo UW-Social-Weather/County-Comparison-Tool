@@ -30,10 +30,12 @@ files <- list.files(path=file_folder, full.names=TRUE, recursive=FALSE)
 
 # Old list of columns to keep 
 # reference_header <- unlist(read.csv2("data/ref_header_works.csv", stringsAsFactors = FALSE))
-# Updated list of columns to keep 
+# Updated list of columns to keep - USE THIS ONE FOR NOW 
 reference_header <- unlist(read.csv2("data/ref_header_updated.csv", stringsAsFactors = FALSE))
-# # The version below is a work in progress - sorting out additional measures 
-# reference_header_add <- unlist(read.csv2("data/ref_header_addmeasures.csv", stringsAsFactors = FALSE))
+
+# # The versions below are a work in progress - sorting out additional measures 
+# reference_header <- unlist(read.csv2("data/ref_header_addmeasures.csv", stringsAsFactors = FALSE))
+# reference_header <- unlist(read.csv2("data/ref_header_new.csv", stringsAsFactors = FALSE))
 
 
 ## Loop to read all files and sheets; store it in a data frame df
@@ -198,7 +200,11 @@ for (x in 2:length(files)) {
     str_replace("Diabetes:% Diabetic", "Diabetes prevalence:% Diabetic") %>%
     str_replace("Diabetes prevalence:% Adults with Diabetes", "Diabetes prevalence:% Diabetic") %>%
     str_replace("Diabetes:95% CI - High", "Diabetes prevalence:95% CI - High") %>%
-    str_replace("Diabetes:95% CI - Low", "Diabetes prevalence:95% CI - Low") 
+    str_replace("Diabetes:95% CI - Low", "Diabetes prevalence:95% CI - Low") %>%
+    str_replace("COVID-19 age-adjusted mortality:# deaths due to COVID-19 during 2020", 
+                "COVID-19 mortality:# deaths during 2020") %>%
+    str_replace("COVID-19 age-adjusted mortality:COVID-19 death rate", "COVID-19 mortality:Death rate")
+    
 
   fileAdd <- fileAdd[!is.na(fileAdd[,1]),]
   fileAdd <- fileAdd[-c(1:2), ]
@@ -217,6 +223,10 @@ for (x in 2:length(files)) {
     print("header fail")
   } else {
     file_bind <- file_bind %>% select(all_of(reference_header))
+    
+    ## work in progress ##
+    # file_bind <- file_bind %>% select(any_of(reference_header))
+    
     names(file_bind) <- reference_header
     
     year <- 2009+x

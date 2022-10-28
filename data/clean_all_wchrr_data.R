@@ -12,23 +12,20 @@ library(dplyr)
 library(tidyverse)
 
 ## Note: need to adapt/update this ## 
-# # Set shared team drive and code repo dynamically
-# if (Sys.info()[7]=="caitlindrover"){
-#   if (Sys.info()[2]=='10 x64'){
-#     file_folder  <- 'C:/Users/frc2/UW/og_phi_global_vaccination_improvement_project - General/'
-#     code_dir <- 'C:/Users/frc2/Documents/uw-phi-vax/global_vac_index/'
-#   } else if (Sys.info()[2]=='Server x64'){
-#     file_folder  <- 'G:/Shared with Me/Merck Vaccine Improvement Index Project/'
-#     code_dir <- 'H:/uw-phi-vax/global_vac_index/'
-#   } else {
-#     file_folder  <- '/Volumes/GoogleDrive/.shortcut-targets-by-id/1P7ITMVB9x01fuYfHW8-uWogw4SpbuvwO/Merck Vaccine Improvement Index Project/'
-#     code_dir <- '~/Documents/uw-phi-vax/'
-#   } 
-# }
+# Set shared team drive and code repo dynamically
+if (Sys.info()["user"]=="caitlindrover"){
+    file_folder  <- '/Users/caitlindrover/Desktop/OneDrive - UW/county_comparison_tool/data/raw_data/wisconsin_chrr'
+  # #add Francisco's info here: 
+  #   } else if (Sys.info()["user"]=='frc2'){
+  #   file_folder  <- ' '
+  # #add Harsha's info here: 
+  #   } else if (Sys.info()["user"]==' '){
+  #   file_path  <- ' '
+  }
+
 
 # Create list of data files - directory path will need to be updated for each user
-files <- list.files(path="/Users/caitlindrover/Desktop/OneDrive - UW/county_comparison_tool/data/raw_data/wisconsin_chrr", 
-                    full.names=TRUE, recursive=FALSE)
+files <- list.files(path=file_folder, full.names=TRUE, recursive=FALSE)
 
 
 # Old list of columns to keep 
@@ -212,6 +209,9 @@ for (x in 2:length(files)) {
   file_bind <- merge(file, fileAdd, by=c("FIPS", "State", "County"))
   headers <- append(header, headerAdd)
   
+  
+  ### Incorporate life expectancy and covid measures here ###
+  
   # Trim columns to keep measures of interest 
   if(!all(reference_header %in% headers)) {
     print("header fail")
@@ -235,8 +235,13 @@ for (x in 2:length(files)) {
   
   df <- rbind(df, file_bind)
 }
+# Fix incorrect county row 
+df$County[df$County==2000] <- "Chilton" 
+
+# Change variable class to numeric
 df[,5:dim(df)[2]] <- sapply(df[,5:dim(df)[2]], as.numeric)
 
+# Add column names back
 reference_header[1:3] <- c("FIPS", "State", "County")
 names(df) <- c("year", reference_header)
 

@@ -2,13 +2,12 @@
 # Created by: Caitlin Drover 
 # Created: October 19, 2022
 
-### Note: Life expectancy & COVID measures are a work in progress - still troubleshooting those  
-
 # set up
 library(readxl)
 library(tibble)
 library(stringr)
 library(dplyr)
+library(plyr)
 library(tidyverse)
 
 ## Note: need to adapt/update this ## 
@@ -28,14 +27,9 @@ if (Sys.info()["user"]=="caitlindrover"){
 files <- list.files(path=file_folder, full.names=TRUE, recursive=FALSE)
 
 
-# Old list of columns to keep 
-# reference_header <- unlist(read.csv2("data/ref_header_works.csv", stringsAsFactors = FALSE))
-# Updated list of columns to keep - USE THIS ONE FOR NOW 
-reference_header <- unlist(read.csv2("data/ref_header_updated.csv", stringsAsFactors = FALSE))
-
-# # The versions below are a work in progress - sorting out additional measures 
-# reference_header <- unlist(read.csv2("data/ref_header_addmeasures.csv", stringsAsFactors = FALSE))
-# reference_header <- unlist(read.csv2("data/ref_header_new.csv", stringsAsFactors = FALSE))
+# List of columns to keep from each excel sheet
+reference_header <- unlist(read.csv2("data/ref_header_works.csv", stringsAsFactors = FALSE))
+reference_header_add <- unlist(read.csv2("data/ref_header_addmeasures.csv", stringsAsFactors = FALSE))
 
 
 ## Loop to read all files and sheets; store it in a data frame df
@@ -210,41 +204,39 @@ for (x in 2:length(files)) {
   fileAdd <- fileAdd[-c(1:2), ]
   names(fileAdd) <- headerAdd
 
-
-  # Merge the two data sheets
-  file_bind <- merge(file, fileAdd, by=c("FIPS", "State", "County"))
-  headers <- append(header, headerAdd)
-  
-  
-  ### Incorporate life expectancy and covid measures here ###
   
   # Trim columns to keep measures of interest 
-  if(!all(reference_header %in% headers)) {
+  if(!all(reference_header %in% header)) {
     print("header fail")
   } else {
-    file_bind <- file_bind %>% select(all_of(reference_header))
-    
-    ## work in progress ##
-    # file_bind <- file_bind %>% select(any_of(reference_header))
-    
-    names(file_bind) <- reference_header
-    
+    file <- file[, which(header %in% reference_header), drop = FALSE]
+    # add year col
     year <- 2009+x
-    file_bind <- add_column(file_bind, year = year, .before = 1)
+    file <- add_column(file, year = year, .before = 1)
     
     file_bind[,5:dim(file_bind)[2]] <- sapply(file_bind[,5:dim(file_bind)[2]], as.numeric)
     file_bind[,5:dim(file_bind)[2]] <- sapply(file_bind[,5:dim(file_bind)[2]], round, digits = 2)
   }
   
-  ## uncomment to troubleshoot: check which headers didn't match 
-  # !(reference_header %in% headers)
+  if(!any(reference_header_add %in% headerAdd)) {
+    print("additional header fail")
+  } else {
+    fileAdd <- fileAdd[, which(headerAdd %in% reference_header_add), drop = FALSE]
+    # add year col
+    year <- 2009+x
+    fileAdd <- add_column(fileAdd, year = year, .before = 1)
+    
+    file_bind[,5:dim(file_bind)[2]] <- sapply(file_bind[,5:dim(file_bind)[2]], as.numeric)
+    file_bind[,5:dim(file_bind)[2]] <- sapply(file_bind[,5:dim(file_bind)[2]], round, digits = 2)
+  } 
+
+  # Merge the two data sheets
+  file_bind <- merge(file, fileAdd, by=c("year", "FIPS", "State", "County"))
   
-  
-  #save_path <- paste0("data/clean/", file[2,1], file[2,3], ".csv")
-  #write.csv2(file, save_path, row.names = FALSE)
-  
-  df <- rbind(df, file_bind)
+  # Bind each year into master df 
+  df <- rbind.fill(df, file_bind)
 }
+
 # Fix incorrect county row 
 df$County[df$County==2000] <- "Chilton" 
 
@@ -252,8 +244,8 @@ df$County[df$County==2000] <- "Chilton"
 df[,5:dim(df)[2]] <- sapply(df[,5:dim(df)[2]], as.numeric)
 
 # Add column names back
-reference_header[1:3] <- c("FIPS", "State", "County")
-names(df) <- c("year", reference_header)
+# reference_header[1:3] <- c("FIPS", "State", "County")
+# names(df) <- c("year", reference_header)
 
 ### note: these will likely need to be renamed (simpler, no spaces/special characters)
 df <- df %>% rename("YPLL Rate" = "Premature death:YPLL Rate", 
@@ -284,10 +276,10 @@ df <- df %>% rename("YPLL Rate" = "Premature death:YPLL Rate",
                     "Chlamydia Incidence [per 100,000]" = "Sexually transmitted infections:Chlamydia Incidence")
 
 
-# still getting an error that "object 'us_election_states' not found"
-# may need to update this later 
-df <- df %>% left_join(us_election_states %>% select(State, ST))
-df <- df %>% relocate(ST, .before = County)
+# #still getting an error that "object 'us_election_states' not found"
+# #may need to update this later 
+# df <- df %>% left_join(us_election_states %>% select(State, ST))
+# df <- df %>% relocate(ST, .before = County)
 
 # saved a copy of this cleaned data without the two rows above 
 # write.csv2(df, "data/clean/all_wchrr.csv", row.names = FALSE)

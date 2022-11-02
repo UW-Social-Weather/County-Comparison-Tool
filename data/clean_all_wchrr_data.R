@@ -282,6 +282,7 @@ df[,5:dim(df)[2]] <- sapply(df[,5:dim(df)[2]], as.numeric)
 
 # save updated cleaned data
 write.csv2(df, paste0(clean_data_dir,"/all_wchrr_updated.csv"), row.names = FALSE)
+saveRDS(df, paste0(clean_data_dir,"/all_wchrr_updated.RDS"))
 
 # saved a copy of this cleaned data without the two rows above 
 # write.csv2(df, "data/clean/all_wchrr.csv", row.names = FALSE)

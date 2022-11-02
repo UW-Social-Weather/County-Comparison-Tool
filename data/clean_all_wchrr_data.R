@@ -13,18 +13,21 @@ library(tidyverse)
 ## Note: need to adapt/update this ## 
 # Set shared team drive and code repo dynamically
 if (Sys.info()["user"]=="caitlindrover"){
-    file_folder  <- '/Users/caitlindrover/Desktop/OneDrive - UW/county_comparison_tool/data/raw_data/wisconsin_chrr'
-  # #add Francisco's info here: 
+    raw_data_dir  <- '/Users/caitlindrover/Desktop/OneDrive - UW/county_comparison_tool/data/raw_data/wisconsin_chrr'
+    clean_data_dir <- '/Users/caitlindrover/Desktop/OneDrive - UW/county_comparison_tool/data/prepped_data'
+  # #add Francisco's info here:
   #   } else if (Sys.info()["user"]=='frc2'){
-  #   file_folder  <- ' '
-  # #add Harsha's info here: 
+  #   raw_data_dir  <- ' '
+  #   clean_data_dir <- ' '
+  # #add Harsha's info here:
   #   } else if (Sys.info()["user"]==' '){
-  #   file_path  <- ' '
+  #   raw_data_dir  <- ' '
+  #   clean_data_dir <- ' '
   }
 
 
 # Create list of data files - directory path will need to be updated for each user
-files <- list.files(path=file_folder, full.names=TRUE, recursive=FALSE)
+files <- list.files(path=raw_data_dir, full.names=TRUE, recursive=FALSE)
 
 
 # List of columns to keep from each excel sheet
@@ -54,8 +57,6 @@ for (x in 2:length(files)) {
   } else {
     print(paste("sheet fail", sheets))
   }
-  
-  ### Work in progress ###
   
   # Read Additional Measure Data sheet
     if("Additional Measure Data" %in% sheets) {
@@ -93,8 +94,6 @@ for (x in 2:length(files)) {
   file[1, 2] <- "State"
   file[1, 3] <- "County"
   
-  
-  ### Work in progress ###
   
   ## Repeat for additional measure data
   previous_col <- ""
@@ -247,39 +246,42 @@ df[,5:dim(df)[2]] <- sapply(df[,5:dim(df)[2]], as.numeric)
 # reference_header[1:3] <- c("FIPS", "State", "County")
 # names(df) <- c("year", reference_header)
 
-### note: these will likely need to be renamed (simpler, no spaces/special characters)
-df <- df %>% rename("YPLL Rate" = "Premature death:YPLL Rate", 
-                    "YPLL Rate-CIL" = "Premature death:95% CI - Low", 
-                    "YPLL Rate-CIH" = "Premature death:95% CI - High", 
-                    
-                    "Poor or fair health [in %]" = "Poor or fair health:% Fair/Poor",
-                    "Poor or fair health [in %]-CIL" = "Poor or fair health:95% CI - Low",
-                    "Poor or fair health [in %]-CIH" = "Poor or fair health:95% CI - High",
-                    
-                    "Physically Unhealthy Days" = "Poor physical health days:Physically Unhealthy Days",
-                    "Physically Unhealthy Days-CIL" = "Poor physical health days:95% CI - Low", 
-                    "Physically Unhealthy Days-CIH" = "Poor physical health days:95% CI - High", 
-                    
-                    "Mentally Unhealthy Days" = "Poor mental health days:Mentally Unhealthy Days", 
-                    "Mentally Unhealthy Days-CIL" = "Poor mental health days:95% CI - Low",
-                    "Mentally Unhealthy Days-CIH" = "Poor mental health days:95% CI - High",
-                    
-                    "Adult smoking [in %]" = "Adult smoking:% Smokers", 
-                    "Adult smoking [in %]-CIL" = "Adult smoking:95% CI - Low", 
-                    "Adult smoking [in %]-CIH" = "Adult smoking:95% CI - High", 
-                    
-                    "Adult obesity [in %]" = "Adult obesity:% Obese",
-                    "Adult obesity [in %]-CIL" = "Adult obesity:95% CI - Low",
-                    "Adult obesity [in %]-CIH" = "Adult obesity:95% CI - High",
-                    
-                    "Chlamydia Cases" = "Sexually transmitted infections:# Chlamydia Cases",
-                    "Chlamydia Incidence [per 100,000]" = "Sexually transmitted infections:Chlamydia Incidence")
+# ### note: these will likely need to be renamed (simpler, no spaces/special characters)
+# df <- df %>% rename("YPLL Rate" = "Premature death:YPLL Rate", 
+#                     "YPLL Rate-CIL" = "Premature death:95% CI - Low", 
+#                     "YPLL Rate-CIH" = "Premature death:95% CI - High", 
+#                     
+#                     "Poor or fair health [in %]" = "Poor or fair health:% Fair/Poor",
+#                     "Poor or fair health [in %]-CIL" = "Poor or fair health:95% CI - Low",
+#                     "Poor or fair health [in %]-CIH" = "Poor or fair health:95% CI - High",
+#                     
+#                     "Physically Unhealthy Days" = "Poor physical health days:Physically Unhealthy Days",
+#                     "Physically Unhealthy Days-CIL" = "Poor physical health days:95% CI - Low", 
+#                     "Physically Unhealthy Days-CIH" = "Poor physical health days:95% CI - High", 
+#                     
+#                     "Mentally Unhealthy Days" = "Poor mental health days:Mentally Unhealthy Days", 
+#                     "Mentally Unhealthy Days-CIL" = "Poor mental health days:95% CI - Low",
+#                     "Mentally Unhealthy Days-CIH" = "Poor mental health days:95% CI - High",
+#                     
+#                     "Adult smoking [in %]" = "Adult smoking:% Smokers", 
+#                     "Adult smoking [in %]-CIL" = "Adult smoking:95% CI - Low", 
+#                     "Adult smoking [in %]-CIH" = "Adult smoking:95% CI - High", 
+#                     
+#                     "Adult obesity [in %]" = "Adult obesity:% Obese",
+#                     "Adult obesity [in %]-CIL" = "Adult obesity:95% CI - Low",
+#                     "Adult obesity [in %]-CIH" = "Adult obesity:95% CI - High",
+#                     
+#                     "Chlamydia Cases" = "Sexually transmitted infections:# Chlamydia Cases",
+#                     "Chlamydia Incidence [per 100,000]" = "Sexually transmitted infections:Chlamydia Incidence")
 
 
 # #still getting an error that "object 'us_election_states' not found"
 # #may need to update this later 
 # df <- df %>% left_join(us_election_states %>% select(State, ST))
 # df <- df %>% relocate(ST, .before = County)
+
+# save updated cleaned data
+write.csv2(df, paste0(clean_data_dir,"/all_wchrr_updated.csv"), row.names = FALSE)
 
 # saved a copy of this cleaned data without the two rows above 
 # write.csv2(df, "data/clean/all_wchrr.csv", row.names = FALSE)

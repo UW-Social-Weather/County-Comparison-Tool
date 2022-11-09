@@ -62,7 +62,7 @@ mod_healthdown <- function(input, output, session) {
   })
 
   output$line <- renderEcharts4r({
-    create_line_graph(us_health_all, my_leafdown$curr_sel_data(), input$prim_var, input$sec_var)
+    create_line_graph(us_health_all, my_leafdown$curr_sel_data(), input$prim_var) #, input$sec_var)
   })
 
   output$scatter <- renderEcharts4r({

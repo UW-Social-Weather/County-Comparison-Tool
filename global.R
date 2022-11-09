@@ -1,5 +1,6 @@
 library(shiny)
 library(shinyjs)
+library(shinythemes)
 library(leaflet)
 library(leafdown)
 library(echarts4r)
@@ -47,10 +48,13 @@ SVI_grouping_data <- readr::read_delim(
   locale = readr::locale(decimal_mark = ",", grouping_mark = ".")
 )
 
+# SVI_grouping_data <- rename(SVI_grouping_data, ST_NUM = ST)
+# SVI_grouping_data <- rename(SVI_grouping_data, ST = ST_ABBR)
+
 us_health_all <- rbind(us_health_states, us_health_counties)
 all_years <- unique(us_health_all$year)
 
-us_health_all <- merge(us_health_all, SVI_grouping_data, by= "NAME_2", all.x= TRUE)
+us_health_all <- merge(us_health_all, SVI_grouping_data, by="NAME_2", all.x= TRUE)
 all_SVI <- unique(na.omit(us_health_all$SVI_Group))
 all_SVI
 

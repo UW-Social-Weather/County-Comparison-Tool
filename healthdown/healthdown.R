@@ -22,10 +22,10 @@ mod_healthdown <- function(input, output, session) {
     if (my_leafdown$curr_map_level == 2) {
       data$ST <- substr(data$HASC_2, 4, 5)
       us_health_counties_year <- subset(us_health_counties1, year == input$year)
-      # us_health_counties_year_SVI <- subset(us_health_counties_year, SVI_Group == input$SVI_Group)
+      us_health_counties_year_SVI <- subset(us_health_counties_year, SVI_Group == input$SVI_Group)
       # there are counties with the same name in different states so we have to join on both
-      data <- overwrite_join(data, us_health_counties_year, by = c("NAME_2", "ST"))
-      # data <- overwrite_join(data, us_health_counties_year_SVI, by = c("NAME_2", "ST"))
+      # data <- overwrite_join(data, us_health_counties_year, by = c("NAME_2", "ST"))
+      data <- overwrite_join(data, us_health_counties_year_SVI, by = c("NAME_2", "ST"))
     } else {
       data$ST <- substr(data$HASC_1, 4, 5)
       us_health_states_year <- subset(us_health_states1, year == input$year)

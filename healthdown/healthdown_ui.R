@@ -53,7 +53,7 @@ mod_healthdown_ui <- function(id) {
                                 #   )),
 
                             ),
-                            mainPanel(
+                            mainPanel(width = 10,
                               tabsetPanel(
                                 tabPanel("Map View",
                                          fluidRow(column(width = 12, h3("County Comparison Tool",style='text-align:center'))),
@@ -89,11 +89,11 @@ mod_healthdown_ui <- function(id) {
                                                )
                                          )))),
 
-                                tabPanel("Map Data", verbatimTextOutput("viewdata"),
-                                         fluidRow(column(width = 12, h3(textOutput("mapdatatitle"),style='text-align:center'))),
-                                         fluidRow(column(width = 12, "Use the left panel to filter map data.",
-                                                         style='font-family:Avenir, Helvetica;font-size:30;text-align:center')),
-                                         ),
+                                # tabPanel("Map Data", verbatimTextOutput("viewdata"),
+                                #          fluidRow(column(width = 12, h3(textOutput("mapdatatitle"),style='text-align:center'))),
+                                #          fluidRow(column(width = 12, "Use the left panel to filter map data.",
+                                #                          style='font-family:Avenir, Helvetica;font-size:30;text-align:center')),
+                                #          ),
                                                       ))))
 }
 

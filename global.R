@@ -48,26 +48,27 @@ SVI_grouping_data <- readr::read_delim(
   locale = readr::locale(decimal_mark = ",", grouping_mark = ".")
 )
 
-# SVI_grouping_data <- rename(SVI_grouping_data, ST_NUM = ST)
-# SVI_grouping_data <- rename(SVI_grouping_data, ST = ST_ABBR)
+SVI_grouping_data <- rename(SVI_grouping_data, ST_NUM = ST)
+SVI_grouping_data <- rename(SVI_grouping_data, ST = ST_ABBR)
 
 us_health_all <- rbind(us_health_states, us_health_counties)
 all_years <- unique(us_health_all$year)
 
-us_health_all <- merge(us_health_all, SVI_grouping_data, by="NAME_2", all.x= TRUE)
-all_SVI <- unique(na.omit(us_health_all$SVI_Group))
+us_health_all <- merge(us_health_all, SVI_grouping_data, by=c("NAME_2","FIPS","ST"), all.x= TRUE)
+all_SVI <- unique(na.omit(SVI_grouping_data$SVI_Group))
 all_SVI
 
-us_health_all <- rename(us_health_all, FIPS = FIPS.x)
+# us_health_all <- rename(us_health_all, FIPS = FIPS.x)
 us_health_all <- rename(us_health_all, State = State.x)
 
-us_health_counties1 <- merge(us_health_counties,SVI_grouping_data, by="NAME_2", all.x=TRUE)
-us_health_states1 <- merge(us_health_states,SVI_grouping_data, by="NAME_2", all.x=TRUE)
+us_health_counties1 <- merge(us_health_counties,SVI_grouping_data, by=c("NAME_2","FIPS","ST"), all.x=TRUE)
+us_health_states1 <- merge(us_health_states,SVI_grouping_data, by=c("NAME_2","FIPS","ST"), all.x=TRUE)
 
-us_health_counties1 <- rename(us_health_counties1, FIPS = FIPS.x)
+# us_health_counties1 <- rename(us_health_counties1, FIPS = FIPS.x)
 us_health_states1 <- rename(us_health_states1, State = State.x)
 
-all_vars <- sort(names(us_health_all)[6:ncol(us_health_all)])
+all_vars <- sort(names(us_health_all)[6:29])
+# all_vars <- sort(names(us_health_all)[6:ncol(us_health_all)])
 all_vars <- all_vars[!grepl("-CI", all_vars)]
 all_vars <- all_vars[!grepl("-Z", all_vars)]
 

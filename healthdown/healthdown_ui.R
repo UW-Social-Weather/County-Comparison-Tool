@@ -12,7 +12,14 @@ mod_healthdown_ui <- function(id) {
                             "",
                             sidebarPanel(width = 2,
                               h3("Select SVI Group"),
-                              selectInput("SVI_Group", "SVI Group",choices=c("low","mid-low","mid-high","high")),
+                              div(class = "var-dropdown",
+                                  #selectInput("SVI_Group", "SVI Group",choices=c("low","mid-low","mid-high","high")),
+                                  pickerInput(
+                                    inputId = ns("SVI_Group"),
+                                    label = "SVI Group",
+                                    choices = c("low","mid-low","mid-high","high"),
+                                    selected = all_SVI[1]
+                                  )),
 
                               h3("Select Map Data"),
                               div(class = "var-dropdown",
@@ -31,7 +38,14 @@ mod_healthdown_ui <- function(id) {
                                     choices = all_vars,
                                     selected = all_vars[1]
                                   )),
-                              
+                              div(
+                                class = "var-dropdown",
+                                pickerInput(
+                                  inputId = ns("sec_var"),
+                                  label = "Select the Secondary Variable",
+                                  choices = all_vars,
+                                  selected = all_vars[2]
+                                ))
                                 # fluidRow(
                                 #   box(
                                 #     width = 12,
@@ -80,12 +94,10 @@ mod_healthdown_ui <- function(id) {
                                          fluidRow(column(width = 12, "Use the left panel to filter map data.",
                                                          style='font-family:Avenir, Helvetica;font-size:30;text-align:center')),
                                          ),
-                                tabPanel("Profile View"),
-                                tabPanel("Profile Data"),
                                                       ))))
 }
 
-# Harsha's OLD CODE: 
+# # # Harsha's OLD CODE:
 # mod_healthdown_ui <- function(id) {
 #   ns <- NS(id)
 #   tagList(
@@ -132,6 +144,14 @@ mod_healthdown_ui <- function(id) {
 #                 selected = all_vars[2]
 #               )
 #             )
+#             # div(class = "var-dropdown",
+#             #     #selectInput("SVI_Group", "SVI Group",choices=c("low","mid-low","mid-high","high")),
+#             #     pickerInput(
+#             #       inputId = ns("SVI_Group"),
+#             #       label = "SVI Group",
+#             #       choices = c("low","mid-low","mid-high","high"),
+#             #       selected = all_SVI[1]
+#             #     ))
 #           )
 #         )
 #       ),

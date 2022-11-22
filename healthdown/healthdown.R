@@ -22,16 +22,19 @@ mod_healthdown <- function(input, output, session) {
     if (my_leafdown$curr_map_level == 2) {
       data$ST <- substr(data$HASC_2, 4, 5)
       us_health_counties_year <- subset(us_health_counties1, year == input$year)
-      us_health_counties_year_SVI <- subset(us_health_counties_year, SVI_Group == input$SVI_Group)
+      # us_health_counties_year_SVI <- subset(us_health_counties_year, SVI_Group == input$SVI_Group)
+      # us_health_counties_year_SVI_pop <- subset(us_health_counties_year_SVI, Description == input$Description)
       # there are counties with the same name in different states so we have to join on both
       # data <- overwrite_join(data, us_health_counties_year, by = c("NAME_2", "ST"))
-      data <- overwrite_join(data, us_health_counties_year_SVI, by = c("NAME_2", "ST"))
+      data <- overwrite_join(data, us_health_counties_year, by = c("NAME_2", "ST"))
+      # data <- data %>% arrange(FIPS, year)
     } else {
       data$ST <- substr(data$HASC_1, 4, 5)
       us_health_states_year <- subset(us_health_states1, year == input$year)
       # us_health_states_year_SVI <- subset(us_health_states_year, SVI_Group == input$SVI_Group)
       # data <- overwrite_join(data, us_health_states_year_SVI, by = "ST")
       data <- overwrite_join(data, us_health_states_year, by = "ST")
+      # data <- data %>% arrange(FIPS, year)
     }
 
     my_leafdown$add_data(data)
@@ -79,12 +82,36 @@ mod_healthdown <- function(input, output, session) {
     create_bar_chart(my_leafdown$curr_sel_data(), input$prim_var)
   })
 
-
+  # map view tab table 
   output$mytable <- DT::renderDataTable({
     all_data <- data()
     sel_data <- my_leafdown$curr_sel_data()
     map_level <- my_leafdown$curr_map_level
     create_mytable(all_data, sel_data, map_level, input$prim_var)
+  })
+  
+  # full county table 
+  dataFull <- reactive({
+    dataFull <- us_health_counties1
+    dataFull_year <- subset(dataFull, year == input$year)
+    dataFull_year_SVI <- subset(dataFull_year, SVI_Group == input$SVI_Group)
+    dataFull_year_SVI_pop <- subset(dataFull_year_SVI, Description == input$Description)
+    # there are counties with the same name in different states so we have to join on both
+    dataFull <- overwrite_join(dataFull, dataFull_year_SVI_pop, by = c("NAME_2", "ST"))
+    dataFull = dataFull[, c('NAME_2', input$prim_var)]
+    dataFull <- rename(dataFull, County = NAME_2)
+    # remove any duplicate rows and rows with NA in the measure of interest
+    dataFull <- dataFull %>% distinct()
+    dataFull <- dataFull[complete.cases(dataFull[ , input$prim_var]),]
+  })
+
+    # output$fulltable = DT::renderDataTable(dataFull())
+  
+  output$fulltable <- DT::renderDataTable({
+  #   # outputArgs = list()
+  #   #map_level <- 2
+  #   #create_mytable(all_data, map_level, input$prim_var)
+    DT::datatable(dataFull(), rownames = FALSE)
   })
 
   # (Un)select shapes in map when click on table

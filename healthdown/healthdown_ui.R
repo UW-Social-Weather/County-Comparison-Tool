@@ -11,7 +11,8 @@ mod_healthdown_ui <- function(id) {
                             collapsible = TRUE,
                             "",
                             sidebarPanel(width = 2,
-                              h3("Select SVI Group"),
+                              h3("Select Data"),
+                              #h4("SVI Group"),
                               div(class = "var-dropdown",
                                   #selectInput("SVI_Group", "SVI Group",choices=c("low","mid-low","mid-high","high")),
                                   pickerInput(
@@ -20,8 +21,16 @@ mod_healthdown_ui <- function(id) {
                                     choices = c("low","mid-low","mid-high","high"),
                                     selected = all_SVI[1]
                                   )),
-
-                              h3("Select Map Data"),
+                              #h4("Population Size"),
+                              div(class = "var-dropdown",
+                                  pickerInput(
+                                    inputId = ns("Description"),
+                                    label = "Population Size",
+                                    choices = all_pop,
+                                    selected = all_pop[1]
+                                  )),
+                              #h4("Year"),
+                              h4("Map Data"),
                               div(class = "var-dropdown",
                                   #selectInput("year", "Year", choices=all_years, selected = max(all_years))),
                                   pickerInput(
@@ -35,16 +44,16 @@ mod_healthdown_ui <- function(id) {
                                   pickerInput(
                                     inputId = ns("prim_var"),
                                     label = "Primary Health Outcome",
-                                    choices = all_vars,
-                                    selected = all_vars[1]
+                                    choices = health_vars,
+                                    selected = health_vars[1]
                                   )),
                               div(
                                 class = "var-dropdown",
                                 pickerInput(
                                   inputId = ns("sec_var"),
-                                  label = "Select the Secondary Variable",
-                                  choices = all_vars,
-                                  selected = all_vars[2]
+                                  label = "Secondary Health Outcome",
+                                  choices = health_vars,
+                                  selected = health_vars[2]
                                 ))
                                 # fluidRow(
                                 #   box(
@@ -56,8 +65,8 @@ mod_healthdown_ui <- function(id) {
                             mainPanel(width = 10,
                               tabsetPanel(
                                 tabPanel("Map View",
-                                         fluidRow(column(width = 12, h3("County Comparison Tool",style='text-align:center'))),
-                                         fluidRow(column(width = 12, "Use the left panel to filter data, and click on the map to switch between locations, trend comparisons, and profile views.
+                                         fluidRow(column(width = 12, h3("County Comparison Tool - Map View",style='text-align:center'))),
+                                         fluidRow(column(width = 12, "Use the left panel to filter data, and click on the map to switch between locations and trend comparisons.
                                                          Please note that data are not currently available for every county in every year, and estimates may change as we process more data.",
                                                          style='font-family:Avenir, Helvetica;font-size:30;text-align:center')),
                                          fluidRow(column(width = 12, wellPanel(tags$style(HTML(".js-irs-0 .irs-single, .js-irs-0 .irs-bar-edge, .js-irs-0 .irs-bar{
@@ -89,11 +98,14 @@ mod_healthdown_ui <- function(id) {
                                                )
                                          )))),
 
-                                # tabPanel("Map Data", verbatimTextOutput("viewdata"),
-                                #          fluidRow(column(width = 12, h3(textOutput("mapdatatitle"),style='text-align:center'))),
-                                #          fluidRow(column(width = 12, "Use the left panel to filter map data.",
-                                #                          style='font-family:Avenir, Helvetica;font-size:30;text-align:center')),
-                                #          ),
+                                tabPanel("County Comparison Data", #verbatimTextOutput("viewdata"),
+                                         fluidRow(column(width = 12, h3("County Comparison Tool - Data View",style='text-align:center'))),
+                                         #fluidRow(column(width = 12, h3(textOutput("mapdatatitle"),style='text-align:center'))),
+                                         fluidRow(column(width = 12, "Use the left panel to filter the data.
+                                                         Please note that data are not currently available for every county in every year, and estimates may change as we process more data.",
+                                                         style='font-family:Avenir, Helvetica;font-size:30;text-align:center')),
+                                         fluidRow(box(width = 12, DT::dataTableOutput(ns("fulltable"), height = "70vh")))
+                                         ),
                                                       ))))
 }
 
@@ -131,8 +143,8 @@ mod_healthdown_ui <- function(id) {
 #               pickerInput(
 #                 inputId = ns("prim_var"),
 #                 label = "Select the Primary Variable",
-#                 choices = all_vars,
-#                 selected = all_vars[1]
+#                 choices = health_vars,
+#                 selected = health_vars[1]
 #               )
 #             ),
 #             div(
@@ -140,8 +152,8 @@ mod_healthdown_ui <- function(id) {
 #               pickerInput(
 #                 inputId = ns("sec_var"),
 #                 label = "Select the Secondary Variable",
-#                 choices = all_vars,
-#                 selected = all_vars[2]
+#                 choices = health_vars,
+#                 selected = health_vars[2]
 #               )
 #             )
 #             # div(class = "var-dropdown",

@@ -30,7 +30,7 @@ mod_healthdown_ui <- function(id) {
                                     selected = all_pop[1]
                                   )),
                               #h4("Year"),
-                              h4("Map Data"),
+                              h4("Map View Data"),
                               div(class = "var-dropdown",
                                   #selectInput("year", "Year", choices=all_years, selected = max(all_years))),
                                   pickerInput(
@@ -64,6 +64,14 @@ mod_healthdown_ui <- function(id) {
                             ),
                             mainPanel(width = 10,
                               tabsetPanel(
+                                tabPanel("County Comparison Data", #verbatimTextOutput("viewdata"),
+                                         fluidRow(column(width = 12, h3("County Comparison Tool - Data View",style='text-align:center'))),
+                                         #fluidRow(column(width = 12, h3(textOutput("mapdatatitle"),style='text-align:center'))),
+                                         fluidRow(column(width = 12, "Use the left panel to filter the data.
+                                                         Please note that data are not currently available for every county in every year, and estimates may change as we process more data.",
+                                                         style='font-family:Avenir, Helvetica;font-size:30;text-align:center')),
+                                         fluidRow(box(width = 12, DT::dataTableOutput(ns("fulltable"), height = "70vh")))
+                                ),
                                 tabPanel("Map View",
                                          fluidRow(column(width = 12, h3("County Comparison Tool - Map View",style='text-align:center'))),
                                          fluidRow(column(width = 12, "Use the left panel to filter data, and click on the map to switch between locations and trend comparisons.
@@ -98,14 +106,6 @@ mod_healthdown_ui <- function(id) {
                                                )
                                          )))),
 
-                                tabPanel("County Comparison Data", #verbatimTextOutput("viewdata"),
-                                         fluidRow(column(width = 12, h3("County Comparison Tool - Data View",style='text-align:center'))),
-                                         #fluidRow(column(width = 12, h3(textOutput("mapdatatitle"),style='text-align:center'))),
-                                         fluidRow(column(width = 12, "Use the left panel to filter the data.
-                                                         Please note that data are not currently available for every county in every year, and estimates may change as we process more data.",
-                                                         style='font-family:Avenir, Helvetica;font-size:30;text-align:center')),
-                                         fluidRow(box(width = 12, DT::dataTableOutput(ns("fulltable"), height = "70vh")))
-                                         ),
                                                       ))))
 }
 

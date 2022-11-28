@@ -98,7 +98,7 @@ mod_healthdown <- function(input, output, session) {
     dataFull_year_SVI_pop <- subset(dataFull_year_SVI, Description == input$Description)
     # there are counties with the same name in different states so we have to join on both
     dataFull <- overwrite_join(dataFull, dataFull_year_SVI_pop, by = c("NAME_2", "ST"))
-    dataFull = dataFull[, c('NAME_2', input$prim_var)]
+    dataFull = dataFull[, c('NAME_2', 'ST', input$prim_var)]
     dataFull <- rename(dataFull, County = NAME_2)
     # remove any duplicate rows and rows with NA in the measure of interest
     dataFull <- dataFull %>% distinct()

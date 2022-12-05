@@ -177,3 +177,7 @@ health_vars <- sort(names(us_health_all)[6:33])
 health_vars <- health_vars[!grepl("CI -", health_vars)]
 health_vars <- health_vars[!grepl("#", health_vars)]
 
+# health_vars_covid <- health_vars[! health_vars %in% 'COVID-19 mortality:Death rate']
+# health_vars_lifeexp <- health_vars[! health_vars %in% 'Life expectancy:Life Expectancy']
+
+

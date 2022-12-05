@@ -20,10 +20,11 @@ mod_healthdown_ui <- function(id) {
                                     label = "SVI Group",
                                     choices = c("low","mid-low","mid-high","high"),
                                     selected = all_SVI[1],
-                                    options = pickerOptions(
-                                      noneSelectedText = NULL
+                                    multiple = TRUE,
+                                    #options = pickerOptions(
+                                      #noneSelectedText = NULL
                                       #width = 'auto'
-                                    )
+                                    #)
                                   )),
                               #h4("Population Size"),
                               div(class = "var-dropdown",
@@ -31,7 +32,8 @@ mod_healthdown_ui <- function(id) {
                                     inputId = ns("Description"),
                                     label = "Population Size",
                                     choices = all_pop,
-                                    selected = all_pop[1]
+                                    selected = all_pop[1],
+                                    multiple = TRUE
                                   )),
                               #h4("Year"),
                               h4("Map View Data"),

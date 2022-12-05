@@ -1,4 +1,19 @@
 mod_healthdown <- function(input, output, session) {
+  
+  # Work in progress - trying to limit health vars to only those available in the selected year
+  # observeEvent(input$year, {
+  # health_vars_covid <- reactive({
+  #   if (input$year==2022)
+  #     health_vars 
+  #   else 
+  #     health_vars[! health_vars %in% 'COVID-19 mortality:Death rate']
+  # })
+  # updatePickerInput(session = session, inputId = "prim_var",
+  #                   choices = health_vars_covid)
+  # health_vars_cov
+  # class(health_vars_cov)
+  # })
+  
   my_leafdown <- Leafdown$new(spdfs_list, "leafdown", input)
 
   rv <- reactiveValues()
@@ -14,11 +29,11 @@ mod_healthdown <- function(input, output, session) {
     rv$update_leafdown <- rv$update_leafdown + 1
   })
 
-
+  # reactive data for map 
   data <- reactive({
     req(rv$update_leafdown)
     data <- my_leafdown$curr_data
-    print(head(data))
+    #print(head(data))
 
     if (my_leafdown$curr_map_level == 2) {
       data$ST <- substr(data$HASC_2, 4, 5)
@@ -43,7 +58,7 @@ mod_healthdown <- function(input, output, session) {
     data
   })
 
-
+  # draw map with data 
   output$leafdown <- renderLeaflet({
     req(spdfs_list)
     req(data)
@@ -94,7 +109,7 @@ mod_healthdown <- function(input, output, session) {
     create_mytable(all_data, sel_data, map_level, input$prim_var)
   })
   
-  # full county comparison table 
+  # reactive data for full county comparison table 
   dataFull <- reactive({
     dataFull <- us_health_counties1
     dataFull_year <- subset(dataFull, year == input$year)
@@ -108,13 +123,13 @@ mod_healthdown <- function(input, output, session) {
     dataFull <- dataFull %>% distinct()
     dataFull <- dataFull[complete.cases(dataFull[ , input$prim_var]),]
   })
-
   
+  # full table 
   output$fulltable <- DT::renderDataTable({
     DT::datatable(dataFull(), rownames = FALSE)
   })
 
-  # (Un)select shapes in map when click on table
+  # (Un)select shapes in map when click on table (map view) 
   observeEvent(input$mytable_row_last_clicked, {
     sel_row <- input$mytable_row_last_clicked
     sel_shape_id <- my_leafdown$curr_poly_ids[sel_row]

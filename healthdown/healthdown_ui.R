@@ -10,7 +10,7 @@ mod_healthdown_ui <- function(id) {
                   fluidPage(theme = shinytheme("flatly"),
                             collapsible = TRUE,
                             "",
-                            sidebarPanel(width = 2,
+                            sidebarPanel(width = 3,
                               h3("Select Data"),
                               #h4("SVI Group"),
                               div(class = "var-dropdown",
@@ -19,7 +19,11 @@ mod_healthdown_ui <- function(id) {
                                     inputId = ns("SVI_Group"),
                                     label = "SVI Group",
                                     choices = c("low","mid-low","mid-high","high"),
-                                    selected = all_SVI[1]
+                                    selected = all_SVI[1],
+                                    options = pickerOptions(
+                                      noneSelectedText = NULL
+                                      #width = 'auto'
+                                    )
                                   )),
                               #h4("Population Size"),
                               div(class = "var-dropdown",
@@ -62,11 +66,10 @@ mod_healthdown_ui <- function(id) {
                                 #   )),
 
                             ),
-                            mainPanel(width = 10,
+                            mainPanel(width = 9,
                               tabsetPanel(
-                                tabPanel("County Comparison Data", #verbatimTextOutput("viewdata"),
+                                tabPanel("County Comparison Data", 
                                          fluidRow(column(width = 12, h3("County Comparison Tool - Data View",style='text-align:center'))),
-                                         #fluidRow(column(width = 12, h3(textOutput("mapdatatitle"),style='text-align:center'))),
                                          fluidRow(column(width = 12, "Use the left panel to filter the data.
                                                          Please note that data are not currently available for every county in every year, and estimates may change as we process more data.",
                                                          style='font-family:Avenir, Helvetica;font-size:30;text-align:center')),

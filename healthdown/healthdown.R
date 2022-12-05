@@ -18,6 +18,7 @@ mod_healthdown <- function(input, output, session) {
   data <- reactive({
     req(rv$update_leafdown)
     data <- my_leafdown$curr_data
+    print(head(data))
 
     if (my_leafdown$curr_map_level == 2) {
       data$ST <- substr(data$HASC_2, 4, 5)
@@ -30,7 +31,7 @@ mod_healthdown <- function(input, output, session) {
       # data <- data %>% arrange(FIPS, year)
     } else {
       data$ST <- substr(data$HASC_1, 4, 5)
-      us_health_states_year <- subset(us_health_states1, year == input$year)
+      us_health_states_year <- subset(us_health_states, year == input$year)
       # us_health_states_year_SVI <- subset(us_health_states_year, SVI_Group == input$SVI_Group)
       # data <- overwrite_join(data, us_health_states_year_SVI, by = "ST")
       data <- overwrite_join(data, us_health_states_year, by = "ST")
@@ -38,6 +39,7 @@ mod_healthdown <- function(input, output, session) {
     }
 
     my_leafdown$add_data(data)
+    print(head(data))
     data
   })
 
@@ -69,15 +71,17 @@ mod_healthdown <- function(input, output, session) {
       )
   })
 
-
+  # line plot
   output$line <- renderEcharts4r({
     create_line_graph(us_health_all, my_leafdown$curr_sel_data(), input$prim_var) #, input$sec_var)
   })
-
+  
+  # scatter plot - not used 
   output$scatter <- renderEcharts4r({
     create_scatter_plot(my_leafdown$curr_sel_data(), input$prim_var, input$sec_var)
   })
-
+  
+  # bar plot - not used
   output$bar <- renderEcharts4r({
     create_bar_chart(my_leafdown$curr_sel_data(), input$prim_var)
   })
@@ -90,7 +94,7 @@ mod_healthdown <- function(input, output, session) {
     create_mytable(all_data, sel_data, map_level, input$prim_var)
   })
   
-  # full county table 
+  # full county comparison table 
   dataFull <- reactive({
     dataFull <- us_health_counties1
     dataFull_year <- subset(dataFull, year == input$year)
@@ -105,12 +109,8 @@ mod_healthdown <- function(input, output, session) {
     dataFull <- dataFull[complete.cases(dataFull[ , input$prim_var]),]
   })
 
-    # output$fulltable = DT::renderDataTable(dataFull())
   
   output$fulltable <- DT::renderDataTable({
-  #   # outputArgs = list()
-  #   #map_level <- 2
-  #   #create_mytable(all_data, map_level, input$prim_var)
     DT::datatable(dataFull(), rownames = FALSE)
   })
 

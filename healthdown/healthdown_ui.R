@@ -29,7 +29,7 @@ mod_healthdown_ui <- function(id) {
                               #h4("Population Size"),
                               div(class = "var-dropdown",
                                   pickerInput(
-                                    inputId = ns("Description"),
+                                    inputId = ns("Classification"),
                                     label = "Population Size",
                                     choices = all_pop,
                                     selected = all_pop[1],

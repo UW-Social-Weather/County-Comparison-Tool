@@ -87,6 +87,7 @@ library(shinyWidgets)
 library(readr)
 library(readxl)
 library(data.table)
+library(stringr)
 
 # resources -----------------------------------------------------------------
 source("healthdown/healthdown.R")
@@ -135,7 +136,9 @@ SVI_grouping_data <- readr::read_delim(
 # load/clean up population data 
 pop_grouping <- suppressMessages(read_excel('data/ruralurbancodes2013.xls', col_names = TRUE))
 pop_grouping <- rename(pop_grouping, ST = State)
-all_pop <- unique(na.omit(pop_grouping$Description))
+pop_grouping <- pop_grouping %>% mutate(Classification = paste0(RUCC_2013, ": ", Description))
+all_pop <- unique(na.omit(pop_grouping$Classification))
+all_pop <- str_sort(all_pop)
 all_pop
 
 # clean up SVI data
@@ -158,7 +161,7 @@ us_health_all <- rename(us_health_all, NAME_2 = NAME_2.x)
 
 # add in population data
 us_health_all <- merge(us_health_all, pop_grouping, by=c("FIPS","ST"), all.x= TRUE)
-us_health_all <- us_health_all %>% select(-State.y, -NAME_2.y, -ST, -ST_NUM, -LOCATION, -AREA_SQMI, -County_Name, -Population_2010, -RUCC_2013)
+us_health_all <- us_health_all %>% select(-State.y, -NAME_2.y, -ST, -ST_NUM, -LOCATION, -AREA_SQMI, -County_Name, -Population_2010, -RUCC_2013, -Description)
 
 # add state abbreviations 
 us_abbrev <- rbind(us_health_states_old, us_health_counties_old)
@@ -172,7 +175,7 @@ us_health_states <- us_health_all %>% filter(is.na(NAME_2))
 # county data only; with SVI and Population data
 us_health_counties1 <- us_health_all %>% filter(!is.na(NAME_2))
 
-
+# clean up health outcome variable list 
 health_vars <- sort(names(us_health_all)[6:33]) 
 health_vars <- health_vars[!grepl("CI -", health_vars)]
 health_vars <- health_vars[!grepl("#", health_vars)]

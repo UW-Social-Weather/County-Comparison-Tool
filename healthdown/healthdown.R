@@ -39,7 +39,7 @@ mod_healthdown <- function(input, output, session) {
       data$ST <- substr(data$HASC_2, 4, 5)
       us_health_counties_year <- subset(us_health_counties1, year == input$year)
       # us_health_counties_year_SVI <- subset(us_health_counties_year, SVI_Group == input$SVI_Group)
-      # us_health_counties_year_SVI_pop <- subset(us_health_counties_year_SVI, Description == input$Description)
+      # us_health_counties_year_SVI_pop <- subset(us_health_counties_year_SVI, Classification == input$Classification)
       # there are counties with the same name in different states so we have to join on both
       # data <- overwrite_join(data, us_health_counties_year, by = c("NAME_2", "ST"))
       data <- overwrite_join(data, us_health_counties_year, by = c("NAME_2", "ST"))
@@ -114,7 +114,7 @@ mod_healthdown <- function(input, output, session) {
     dataFull <- us_health_counties1
     dataFull_year <- subset(dataFull, year == input$year)
     dataFull_year_SVI <- subset(dataFull_year, SVI_Group == input$SVI_Group)
-    dataFull_year_SVI_pop <- subset(dataFull_year_SVI, Description == input$Description)
+    dataFull_year_SVI_pop <- subset(dataFull_year_SVI, Classification == input$Classification)
     # there are counties with the same name in different states so we have to join on both
     dataFull <- overwrite_join(dataFull, dataFull_year_SVI_pop, by = c("NAME_2", "ST"))
     dataFull = dataFull[, c('NAME_2', 'ST', input$prim_var)]

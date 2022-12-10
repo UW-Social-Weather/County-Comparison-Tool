@@ -6,8 +6,8 @@
 library(readxl)
 library(tibble)
 library(stringr)
-library(dplyr)
 library(plyr)
+library(dplyr)
 library(tidyverse)
 
 ## Note: need to adapt/update this ## 

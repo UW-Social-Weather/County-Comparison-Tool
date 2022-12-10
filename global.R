@@ -7,6 +7,7 @@ library(shinythemes)
 library(leaflet)
 library(leafdown)
 library(echarts4r)
+library(plyr)
 library(dplyr)
 library(tidyr)
 library(RColorBrewer)
@@ -74,15 +75,15 @@ SVI_grouping_data <- readr::read_delim(
 
 # load/clean up population data 
 pop_grouping <- suppressMessages(read_excel('data/ruralurbancodes2013.xls', col_names = TRUE))
-pop_grouping <- rename(pop_grouping, ST = State)
+pop_grouping <- dplyr::rename(pop_grouping, ST = State)
 pop_grouping <- pop_grouping %>% mutate(Classification = paste0(RUCC_2013, ": ", Description))
 all_pop <- unique(na.omit(pop_grouping$Classification))
 all_pop <- str_sort(all_pop)
 all_pop
 
 # clean up SVI data
-SVI_grouping_data <- rename(SVI_grouping_data, ST_NUM = ST)
-SVI_grouping_data <- rename(SVI_grouping_data, ST = ST_ABBR)
+SVI_grouping_data <- dplyr::rename(SVI_grouping_data, ST_NUM = ST)
+SVI_grouping_data <- dplyr::rename(SVI_grouping_data, ST = ST_ABBR)
 SVI_grouping_data$FIPS <- sprintf("%05d",SVI_grouping_data$FIPS)
 all_SVI <- unique(na.omit(SVI_grouping_data$SVI_Group))
 all_SVI
@@ -91,20 +92,31 @@ all_years <- unique(us_wchrr_all$year)
 
 # clean up health measure data 
 us_wchrr_all <- us_wchrr_all %>% mutate_if(is.numeric, round, digits = 1)
-us_wchrr_all <- rename(us_wchrr_all, NAME_2 = County)
+us_wchrr_all <- dplyr::rename(us_wchrr_all, NAME_2 = County)
 # add ST abbrevs
 us_wchrr_all <- merge(st_fips, us_wchrr_all, by = "FIPS", all.y=TRUE)
 us_wchrr_all <- us_wchrr_all %>% arrange(FIPS, year)
+
+# get missing years of state data 
+us_health_old <- select(us_health_old, -contains("-Z"))
+us_health_missing <- us_health_old %>% filter(is.na(NAME_2))
+us_health_missing <- us_health_missing %>% filter(year %in% (2014:2019))
+us_wchrr_all <- us_wchrr_all[, c(3,1,4,2,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,
+                                 20,21,22,23,24,25,26,27,28,29,30,31,32,33)]
+us_wchrr_all <- rbind.fill(us_wchrr_all, us_health_missing)
+us_wchrr_all <- us_wchrr_all %>% arrange(FIPS, year)
+
 
 # Merging data files -----------------------------------------------------------------
 
 # add in SVI data
 us_health_all <- merge(us_wchrr_all, SVI_grouping_data, by=c("FIPS","ST","NAME_2"), all.x = TRUE) 
-us_health_all <- rename(us_health_all, State = State.x)
+us_health_all <- dplyr::rename(us_health_all, State = State.x)
 
 # add in population data
 us_health_all <- merge(us_health_all, pop_grouping, by=c("FIPS","ST"), all.x= TRUE)
 us_health_all <- us_health_all %>% select(-ST_NUM, -State.y, -LOCATION, -AREA_SQMI, -County_Name, -Population_2010, -RUCC_2013, -Description)
+us_health_all <- us_health_all %>% arrange(FIPS, year)
 
 # state data only 
 us_health_states <- us_health_all %>% filter(is.na(NAME_2))
@@ -246,7 +258,7 @@ mod_healthdown <- function(input, output, session) {
     # there are counties with the same name in different states so we have to join on both
     dataFull <- overwrite_join(dataFull, dataFull_year_SVI_pop, by = c("NAME_2", "ST"))
     dataFull = dataFull[, c('NAME_2', 'ST', input$prim_var)]
-    dataFull <- rename(dataFull, County = NAME_2)
+    dataFull <- dplyr::rename(dataFull, County = NAME_2)
     # remove any duplicate rows and rows with NA in the measure of interest
     dataFull <- dataFull %>% distinct()
     dataFull <- dataFull[complete.cases(dataFull[ , input$prim_var]),]

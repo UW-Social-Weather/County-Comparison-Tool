@@ -272,7 +272,18 @@ df <- df %>% dplyr::rename("YPLL Rate" = "Premature death:YPLL Rate",
                     "Adult obesity [in %]-CIH" = "Adult obesity:95% CI - High",
 
                     "Chlamydia Cases" = "Sexually transmitted infections:# Chlamydia Cases",
-                    "Chlamydia Incidence [per 100,000]" = "Sexually transmitted infections:Chlamydia Incidence")
+                    "Chlamydia Incidence [per 100,000]" = "Sexually transmitted infections:Chlamydia Incidence",
+                    
+                    "Diabetes [in %]" = "Diabetes prevalence:% Diabetic",
+                    "Diabetes [in %]-CIH" = "Diabetes prevalence:95% CI - High", 
+                    "Diabetes [in %]-CIL" = "Diabetes prevalence:95% CI - Low", 
+                    
+                    "Life expectancy" = "Life expectancy:Life Expectancy",                                                  
+                    "Life expectancy-CIL" = "Life expectancy:95% CI - Low",                                                       
+                    "Life expectancy-CIH" = "Life expectancy:95% CI - High",  
+                    
+                    "COVID-19 deaths in 2020" = "COVID-19 mortality:# deaths during 2020",
+                    "COVID-19 death rate in 2020" = "COVID-19 mortality:Death rate")
 
 
 # #still getting an error that "object 'us_election_states' not found"

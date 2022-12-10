@@ -54,7 +54,7 @@ us_health_counties_old <- readr::read_delim(
 
 # load health measure WCHRR data
 us_wchrr_all <- readr::read_delim(
-  "data/clean/all_wchrr_updated.csv", ";",
+  "data/clean/all_wchrr_updatedv2.csv", ";",
   escape_double = FALSE, trim_ws = TRUE,
   col_types = readr::cols(),
   locale = readr::locale(decimal_mark = ",", grouping_mark = ".")
@@ -115,8 +115,9 @@ us_health_counties1 <- us_health_all %>% filter(!is.na(NAME_2))
 
 # clean up health outcome variable list 
 health_vars <- sort(names(us_health_all)[6:33]) 
-health_vars <- health_vars[!grepl("CI -", health_vars)]
-health_vars <- health_vars[!grepl("#", health_vars)]
+health_vars <- health_vars[!grepl("-CI", health_vars)]
+health_vars <- health_vars[!grepl("Cases", health_vars)]
+health_vars <- health_vars[!grepl("deaths", health_vars)]
 
 # health_vars_covid <- health_vars[! health_vars %in% 'COVID-19 mortality:Death rate']
 # health_vars_lifeexp <- health_vars[! health_vars %in% 'Life expectancy:Life Expectancy']

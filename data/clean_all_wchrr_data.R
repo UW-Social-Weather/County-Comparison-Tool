@@ -213,8 +213,8 @@ for (x in 2:length(files)) {
     year <- 2009+x
     file <- add_column(file, year = year, .before = 1)
     
-    file_bind[,5:dim(file_bind)[2]] <- sapply(file_bind[,5:dim(file_bind)[2]], as.numeric)
-    file_bind[,5:dim(file_bind)[2]] <- sapply(file_bind[,5:dim(file_bind)[2]], round, digits = 2)
+    file[,5:dim(file)[2]] <- sapply(file[,5:dim(file)[2]], as.numeric)
+    file[,5:dim(file)[2]] <- sapply(file[,5:dim(file)[2]], round, digits = 2)
   }
   
   if(!any(reference_header_add %in% headerAdd)) {
@@ -225,8 +225,8 @@ for (x in 2:length(files)) {
     year <- 2009+x
     fileAdd <- add_column(fileAdd, year = year, .before = 1)
     
-    file_bind[,5:dim(file_bind)[2]] <- sapply(file_bind[,5:dim(file_bind)[2]], as.numeric)
-    file_bind[,5:dim(file_bind)[2]] <- sapply(file_bind[,5:dim(file_bind)[2]], round, digits = 2)
+    fileAdd[,5:dim(fileAdd)[2]] <- sapply(fileAdd[,5:dim(fileAdd)[2]], as.numeric)
+    fileAdd[,5:dim(fileAdd)[2]] <- sapply(fileAdd[,5:dim(fileAdd)[2]], round, digits = 2)
   } 
 
   # Merge the two data sheets
@@ -247,32 +247,32 @@ df[,5:dim(df)[2]] <- sapply(df[,5:dim(df)[2]], as.numeric)
 # names(df) <- c("year", reference_header)
 
 # ### note: these will likely need to be renamed (simpler, no spaces/special characters)
-# df <- df %>% rename("YPLL Rate" = "Premature death:YPLL Rate", 
-#                     "YPLL Rate-CIL" = "Premature death:95% CI - Low", 
-#                     "YPLL Rate-CIH" = "Premature death:95% CI - High", 
-#                     
-#                     "Poor or fair health [in %]" = "Poor or fair health:% Fair/Poor",
-#                     "Poor or fair health [in %]-CIL" = "Poor or fair health:95% CI - Low",
-#                     "Poor or fair health [in %]-CIH" = "Poor or fair health:95% CI - High",
-#                     
-#                     "Physically Unhealthy Days" = "Poor physical health days:Physically Unhealthy Days",
-#                     "Physically Unhealthy Days-CIL" = "Poor physical health days:95% CI - Low", 
-#                     "Physically Unhealthy Days-CIH" = "Poor physical health days:95% CI - High", 
-#                     
-#                     "Mentally Unhealthy Days" = "Poor mental health days:Mentally Unhealthy Days", 
-#                     "Mentally Unhealthy Days-CIL" = "Poor mental health days:95% CI - Low",
-#                     "Mentally Unhealthy Days-CIH" = "Poor mental health days:95% CI - High",
-#                     
-#                     "Adult smoking [in %]" = "Adult smoking:% Smokers", 
-#                     "Adult smoking [in %]-CIL" = "Adult smoking:95% CI - Low", 
-#                     "Adult smoking [in %]-CIH" = "Adult smoking:95% CI - High", 
-#                     
-#                     "Adult obesity [in %]" = "Adult obesity:% Obese",
-#                     "Adult obesity [in %]-CIL" = "Adult obesity:95% CI - Low",
-#                     "Adult obesity [in %]-CIH" = "Adult obesity:95% CI - High",
-#                     
-#                     "Chlamydia Cases" = "Sexually transmitted infections:# Chlamydia Cases",
-#                     "Chlamydia Incidence [per 100,000]" = "Sexually transmitted infections:Chlamydia Incidence")
+df <- df %>% dplyr::rename("YPLL Rate" = "Premature death:YPLL Rate",
+                    "YPLL Rate-CIL" = "Premature death:95% CI - Low",
+                    "YPLL Rate-CIH" = "Premature death:95% CI - High",
+
+                    "Poor or fair health [in %]" = "Poor or fair health:% Fair/Poor",
+                    "Poor or fair health [in %]-CIL" = "Poor or fair health:95% CI - Low",
+                    "Poor or fair health [in %]-CIH" = "Poor or fair health:95% CI - High",
+
+                    "Physically Unhealthy Days" = "Poor physical health days:Physically Unhealthy Days",
+                    "Physically Unhealthy Days-CIL" = "Poor physical health days:95% CI - Low",
+                    "Physically Unhealthy Days-CIH" = "Poor physical health days:95% CI - High",
+
+                    "Mentally Unhealthy Days" = "Poor mental health days:Mentally Unhealthy Days",
+                    "Mentally Unhealthy Days-CIL" = "Poor mental health days:95% CI - Low",
+                    "Mentally Unhealthy Days-CIH" = "Poor mental health days:95% CI - High",
+
+                    "Adult smoking [in %]" = "Adult smoking:% Smokers",
+                    "Adult smoking [in %]-CIL" = "Adult smoking:95% CI - Low",
+                    "Adult smoking [in %]-CIH" = "Adult smoking:95% CI - High",
+
+                    "Adult obesity [in %]" = "Adult obesity:% Obese",
+                    "Adult obesity [in %]-CIL" = "Adult obesity:95% CI - Low",
+                    "Adult obesity [in %]-CIH" = "Adult obesity:95% CI - High",
+
+                    "Chlamydia Cases" = "Sexually transmitted infections:# Chlamydia Cases",
+                    "Chlamydia Incidence [per 100,000]" = "Sexually transmitted infections:Chlamydia Incidence")
 
 
 # #still getting an error that "object 'us_election_states' not found"
@@ -281,8 +281,8 @@ df[,5:dim(df)[2]] <- sapply(df[,5:dim(df)[2]], as.numeric)
 # df <- df %>% relocate(ST, .before = County)
 
 # save updated cleaned data
-write.csv2(df, paste0(clean_data_dir,"/all_wchrr_updated.csv"), row.names = FALSE)
-saveRDS(df, paste0(clean_data_dir,"/all_wchrr_updated.RDS"))
+write.csv2(df, paste0(clean_data_dir,"/all_wchrr_updatedv2.csv"), row.names = FALSE)
+saveRDS(df, paste0(clean_data_dir,"/all_wchrr_updatedv2.RDS"))
 
 # saved a copy of this cleaned data without the two rows above 
 # write.csv2(df, "data/clean/all_wchrr.csv", row.names = FALSE)

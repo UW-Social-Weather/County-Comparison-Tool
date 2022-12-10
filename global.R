@@ -51,6 +51,10 @@ us_health_counties_old <- readr::read_delim(
   col_types = readr::cols(),
   locale = readr::locale(decimal_mark = ",", grouping_mark = ".")
 )
+# get ST abbrevs
+us_health_old <- rbind(us_health_states_old, us_health_counties_old)
+st_fips <- us_health_old %>% select("FIPS","ST")
+st_fips <- st_fips %>% distinct()
 
 # load health measure WCHRR data
 us_wchrr_all <- readr::read_delim(
@@ -88,25 +92,19 @@ all_years <- unique(us_wchrr_all$year)
 # clean up health measure data 
 us_wchrr_all <- us_wchrr_all %>% mutate_if(is.numeric, round, digits = 1)
 us_wchrr_all <- rename(us_wchrr_all, NAME_2 = County)
-
+# add ST abbrevs
+us_wchrr_all <- merge(st_fips, us_wchrr_all, by = "FIPS", all.y=TRUE)
+us_wchrr_all <- us_wchrr_all %>% arrange(FIPS, year)
 
 # Merging data files -----------------------------------------------------------------
 
 # add in SVI data
-us_health_all <- merge(us_wchrr_all, SVI_grouping_data, by="FIPS", all.x = TRUE) 
+us_health_all <- merge(us_wchrr_all, SVI_grouping_data, by=c("FIPS","ST","NAME_2"), all.x = TRUE) 
 us_health_all <- rename(us_health_all, State = State.x)
-us_health_all <- rename(us_health_all, NAME_2 = NAME_2.x)
 
 # add in population data
 us_health_all <- merge(us_health_all, pop_grouping, by=c("FIPS","ST"), all.x= TRUE)
-us_health_all <- us_health_all %>% select(-State.y, -NAME_2.y, -ST, -ST_NUM, -LOCATION, -AREA_SQMI, -County_Name, -Population_2010, -RUCC_2013, -Description)
-
-# add state abbreviations 
-us_abbrev <- rbind(us_health_states_old, us_health_counties_old)
-us_abbrev <- us_abbrev %>% select("FIPS","ST")
-us_abbrev <- us_abbrev %>% distinct()
-us_health_all <- merge(us_abbrev, us_health_all, by = "FIPS", all.y = TRUE)
-us_health_all <- us_health_all %>% arrange(FIPS, year)
+us_health_all <- us_health_all %>% select(-ST_NUM, -State.y, -LOCATION, -AREA_SQMI, -County_Name, -Population_2010, -RUCC_2013, -Description)
 
 # state data only 
 us_health_states <- us_health_all %>% filter(is.na(NAME_2))
@@ -118,9 +116,6 @@ health_vars <- sort(names(us_health_all)[6:33])
 health_vars <- health_vars[!grepl("-CI", health_vars)]
 health_vars <- health_vars[!grepl("Cases", health_vars)]
 health_vars <- health_vars[!grepl("deaths", health_vars)]
-
-# health_vars_covid <- health_vars[! health_vars %in% 'COVID-19 mortality:Death rate']
-# health_vars_lifeexp <- health_vars[! health_vars %in% 'Life expectancy:Life Expectancy']
 
 ###################################### SERVER ###################################### 
 

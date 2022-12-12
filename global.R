@@ -395,4 +395,4 @@ mod_healthdown_ui <- function(id) {
                               ))))
 }
 
-
+shinyApp(mod_healthdown_ui, mod_healthdown)

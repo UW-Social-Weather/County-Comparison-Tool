@@ -78,6 +78,7 @@ pop_grouping <- suppressMessages(read_excel('data/ruralurbancodes2013.xls', col_
 pop_grouping <- dplyr::rename(pop_grouping, ST = State)
 pop_grouping <- pop_grouping %>% mutate(Classification = paste0(RUCC_2013, ": ", Description))
 all_pop <- unique(na.omit(pop_grouping$Classification))
+all_pop <- all_pop[!grepl("NA:", all_pop)]
 all_pop <- str_sort(all_pop)
 all_pop
 
@@ -134,8 +135,8 @@ health_vars <- health_vars[!grepl("deaths", health_vars)]
 mod_healthdown <- function(input, output, session) {
   
   # Work in progress - trying to limit health vars to only those available in the selected year
-  # observeEvent(input$year, {
-  # health_vars_covid <- reactive({
+  # observeEvent(c(input$year), {
+  # health_vars_in_year <- reactive({
   #   if (input$year==2022)
   #     health_vars 
   #   else 

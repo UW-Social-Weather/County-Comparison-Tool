@@ -152,11 +152,11 @@ mod_healthdown <- function(input, output, session) {
   rv <- reactiveValues()
   rv$update_leafdown <- 0
   
+  # drill up/down buttons for map 
   observeEvent(input$drill_down, {
     my_leafdown$drill_down()
     rv$update_leafdown <- rv$update_leafdown + 1
   })
-  
   observeEvent(input$drill_up, {
     my_leafdown$drill_up()
     rv$update_leafdown <- rv$update_leafdown + 1
@@ -168,13 +168,14 @@ mod_healthdown <- function(input, output, session) {
     data <- my_leafdown$curr_data
     #print(head(data))
     
+    # the commented out lines here will filter the map data to only display all applied filters
+    # they were removed because there was too much grey space when incorporated - only used in comparison table now
     if (my_leafdown$curr_map_level == 2) {
       data$ST <- substr(data$HASC_2, 4, 5)
       us_health_counties_year <- subset(us_health_counties1, year == input$year)
       # us_health_counties_year_SVI <- subset(us_health_counties_year, SVI_Group == input$SVI_Group)
       # us_health_counties_year_SVI_pop <- subset(us_health_counties_year_SVI, Classification == input$Classification)
-      # there are counties with the same name in different states so we have to join on both
-      # data <- overwrite_join(data, us_health_counties_year, by = c("NAME_2", "ST"))
+      # #there are counties with the same name in different states so we have to join on both
       data <- overwrite_join(data, us_health_counties_year, by = c("NAME_2", "ST"))
       # data <- data %>% arrange(FIPS, year)
     } else {
@@ -187,7 +188,7 @@ mod_healthdown <- function(input, output, session) {
     }
     
     my_leafdown$add_data(data)
-    print(head(data))
+    #print(head(data)) #can uncomment this to check new data
     data
   })
   
@@ -249,7 +250,7 @@ mod_healthdown <- function(input, output, session) {
     my_leafdown$toggle_shape_select(sel_shape_id)
   })
   
-  # reactive data for full county comparison table 
+  # reactive data for full county comparison table - this one filters by all selections 
   dataFull <- reactive({
     dataFull <- us_health_counties1
     dataFull_year <- subset(dataFull, year == input$year)
@@ -264,7 +265,7 @@ mod_healthdown <- function(input, output, session) {
     dataFull <- dataFull[complete.cases(dataFull[ , input$prim_var]),]
   })
   
-  # full table 
+  # full table for comparison tab 
   output$fulltable <- DT::renderDataTable({
     DT::datatable(dataFull(), rownames = FALSE)
   })
@@ -285,6 +286,7 @@ mod_healthdown_ui <- function(id) {
           fluidPage(theme = shinytheme("flatly"),
                     collapsible = TRUE,
                     "",
+                    ## all of the filtering dropdowns are in the sidebar panel 
                     sidebarPanel(width = 3,
                                  h3("Select Data"),
                                  #h4("SVI Group"),
@@ -345,6 +347,7 @@ mod_healthdown_ui <- function(id) {
                     ),
                     mainPanel(width = 9,
                               tabsetPanel(
+                                ## County Comparison tab with full table only 
                                 tabPanel("County Comparison Data", 
                                          fluidRow(column(width = 12, h3("County Comparison Tool - Data View",style='text-align:center'))),
                                          fluidRow(column(width = 12, "Use the left panel to filter the data.
@@ -352,6 +355,7 @@ mod_healthdown_ui <- function(id) {
                                                          style='font-family:Avenir, Helvetica;font-size:30;text-align:center')),
                                          fluidRow(box(width = 12, DT::dataTableOutput(ns("fulltable"), height = "70vh")))
                                 ),
+                                ## Map view tab 
                                 tabPanel("Map View",
                                          fluidRow(column(width = 12, h3("County Comparison Tool - Map View",style='text-align:center'))),
                                          fluidRow(column(width = 12, "Use the left panel to filter data, and click on the map to switch between locations and trend comparisons.
@@ -361,12 +365,14 @@ mod_healthdown_ui <- function(id) {
                                                                          background: #48C9B0;
                                                                          border-top: 1px solid #48C9B0 ; border-bottom: 1px solid #48C9B0}")),
                                                                                fluidRow(
+                                                                                 ## data table associated with map 
                                                                                  box(
                                                                                    width = 4,
                                                                                    DT::dataTableOutput(ns("mytable"), height = "60vh")
                                                                                  ),
                                                                                  column(
                                                                                    width = 9,
+                                                                                   ## map 
                                                                                    box(
                                                                                      width = 12,
                                                                                      closable = FALSE,
@@ -375,6 +381,7 @@ mod_healthdown_ui <- function(id) {
                                                                                      actionButton(ns("drill_up"), "Drill Up", icon = icon("arrow-up"), class = "drill-button healthdown-button"),
                                                                                      leafletOutput(ns("leafdown"), height = "35vh")
                                                                                    ),
+                                                                                   ## line plot 
                                                                                    box(
                                                                                      width = 12,
                                                                                      closable = FALSE,

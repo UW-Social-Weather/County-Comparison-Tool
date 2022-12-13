@@ -89,7 +89,7 @@ SVI_grouping_data$FIPS <- sprintf("%05d",SVI_grouping_data$FIPS)
 all_SVI <- unique(na.omit(SVI_grouping_data$SVI_Group))
 all_SVI
 
-all_years <- unique(us_wchrr_all$year)
+#all_years <- unique(us_wchrr_all$year)
 
 # clean up health measure data 
 us_wchrr_all <- us_wchrr_all %>% mutate_if(is.numeric, round, digits = 1)
@@ -107,6 +107,10 @@ us_wchrr_all <- us_wchrr_all[, c(3,1,4,2,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19
 us_wchrr_all <- rbind.fill(us_wchrr_all, us_health_missing)
 us_wchrr_all <- us_wchrr_all %>% arrange(FIPS, year)
 
+# remove unnecessary vars 
+us_wchrr_all <- us_wchrr_all[, !grepl("-CI", colnames(us_wchrr_all))]
+us_wchrr_all <- us_wchrr_all[!grepl("Cases", colnames(us_wchrr_all))]
+us_wchrr_all <- us_wchrr_all[!grepl("deaths", colnames(us_wchrr_all))]
 
 # Merging data files -----------------------------------------------------------------
 
@@ -124,28 +128,188 @@ us_health_states <- us_health_all %>% filter(is.na(NAME_2))
 # county data only; with SVI and Population data
 us_health_counties1 <- us_health_all %>% filter(!is.na(NAME_2))
 
-# clean up health outcome variable list 
-health_vars <- sort(names(us_health_all)[6:33]) 
-health_vars <- health_vars[!grepl("-CI", health_vars)]
-health_vars <- health_vars[!grepl("Cases", health_vars)]
-health_vars <- health_vars[!grepl("deaths", health_vars)]
+# clean up health outcome variable list & get vars in each year for reactive filter options 
+health_vars <- sort(names(us_health_all)[6:15]) 
+
+health_vars_nocovid <- health_vars[!grepl("COVID", health_vars)]
+health_vars_nocovidlifeexp <- health_vars_nocovid[!grepl("expectancy", health_vars_nocovid)]
+health_vars_2011 <- as.data.frame(health_vars_nocovidlifeexp)
+colnames(health_vars_2011) <- "health_vars"
+health_vars_2011$year <- "2011" 
+health_vars_2012 <- as.data.frame(health_vars_nocovidlifeexp)
+colnames(health_vars_2012) <- "health_vars"
+health_vars_2012$year <- "2012" 
+health_vars_2013 <- as.data.frame(health_vars_nocovidlifeexp)
+colnames(health_vars_2013) <- "health_vars"
+health_vars_2013$year <- "2013" 
+health_vars_2014 <- as.data.frame(health_vars_nocovidlifeexp)
+colnames(health_vars_2014) <- "health_vars"
+health_vars_2014$year <- "2014" 
+health_vars_2015 <- as.data.frame(health_vars_nocovidlifeexp)
+colnames(health_vars_2015) <- "health_vars"
+health_vars_2015$year <- "2015" 
+health_vars_2016 <- as.data.frame(health_vars_nocovidlifeexp)
+colnames(health_vars_2016) <- "health_vars"
+health_vars_2016$year <- "2016" 
+health_vars_2017 <- as.data.frame(health_vars_nocovidlifeexp)
+colnames(health_vars_2017) <- "health_vars"
+health_vars_2017$year <- "2017" 
+health_vars_2018 <- as.data.frame(health_vars_nocovidlifeexp)
+colnames(health_vars_2018) <- "health_vars"
+health_vars_2018$year <- "2018" 
+health_vars_2019 <- as.data.frame(health_vars_nocovid)
+colnames(health_vars_2019) <- "health_vars"
+health_vars_2019$year <- "2019" 
+health_vars_2020 <- as.data.frame(health_vars_nocovid)
+colnames(health_vars_2020) <- "health_vars"
+health_vars_2020$year <- "2020" 
+health_vars_2021 <- as.data.frame(health_vars_nocovid)
+colnames(health_vars_2021) <- "health_vars"
+health_vars_2021$year <- "2021" 
+health_vars_2022 <- as.data.frame(health_vars)
+health_vars_2022$year <- "2022"
+health_var_yrs <- rbind(health_vars_2011, health_vars_2012, health_vars_2013, health_vars_2014, health_vars_2015,
+                        health_vars_2016, health_vars_2017, health_vars_2018, health_vars_2019, health_vars_2020, 
+                        health_vars_2021, health_vars_2022)
+
+
+######################################   UI   ###################################### 
+
+mod_healthdown_ui <- function(id) {
+  ns <- NS(id)
+  tagList(useShinyjs(),
+          tags$head(tags$style(type = 'text/css','.navbar-brand{display:none;}'),
+                    tags$style( type = 'text/css',
+                                ".selectize-input { word-wrap : break-word;}
+                            .selectize-input { word-break: break-word;}
+                            .selectize-dropdown {word-wrap : break-word;} "
+                    )),
+          fluidPage(theme = shinytheme("flatly"),
+                    collapsible = TRUE,
+                    "",
+                    ## all of the filtering dropdowns are in the sidebar panel 
+                    sidebarPanel(width = 3,
+                                 h3("Select Data"),
+                                 #h4("SVI Group"),
+                                 div(class = "var-dropdown",
+                                     #selectInput("SVI_Group", "SVI Group",choices=c("low","mid-low","mid-high","high")),
+                                     pickerInput(
+                                       inputId = ns("SVI_Group"),
+                                       label = "SVI Group",
+                                       choices = c("low","mid-low","mid-high","high"),
+                                       selected = all_SVI[1],
+                                       multiple = TRUE,
+                                       #options = pickerOptions(
+                                       #noneSelectedText = NULL
+                                       #width = 'auto'
+                                       #)
+                                     )),
+                                 #h4("Population Size"),
+                                 div(class = "var-dropdown",
+                                     pickerInput(
+                                       inputId = ns("Classification"),
+                                       label = "Population Size",
+                                       choices = all_pop,
+                                       selected = all_pop[1],
+                                       multiple = TRUE
+                                     )),
+                                 #h4("Year"),
+                                 h4("Map View Data"),
+                                 div(class = "var-dropdown",
+                                     #selectInput("year", "Year", choices=all_years, selected = max(all_years))),
+                                     pickerInput(
+                                       inputId = ns("year"),
+                                       label = "Year",
+                                       choices = sort(unique(health_var_yrs$year)),
+                                       selected = max(unique(health_var_yrs$year))
+                                     )),
+                                 div(class = "var-dropdown",
+                                     # selectInput("prim_var", "Primary Health Outcome",
+                                     #             choices = sort(unique(health_var_yrs$health_vars)), 
+                                     #             selected = sort(unique(health_var_yrs$health_vars))[1])),
+                                     pickerInput(
+                                       inputId = ns("prim_var"),
+                                       label = "Primary Health Outcome",
+                                       choices = sort(unique(health_var_yrs$health_vars)),
+                                       selected = sort(unique(health_var_yrs$health_vars))[1]
+                                     )),
+                                 div(
+                                   class = "var-dropdown",
+                                   pickerInput(
+                                     inputId = ns("sec_var"),
+                                     label = "Secondary Health Outcome",
+                                     choices = sort(unique(health_var_yrs$health_vars)),
+                                     selected = sort(unique(health_var_yrs$health_vars))[2]
+                                   ))
+                                 # fluidRow(
+                                 #   box(
+                                 #     width = 12,
+                                 #     DT::dataTableOutput(ns("mytable"), height = "50vh")
+                                 #   )),
+                                 
+                    ),
+                    mainPanel(width = 9,
+                              tabsetPanel(
+                                ## County Comparison tab with full table only 
+                                tabPanel("County Comparison Data", 
+                                         fluidRow(column(width = 12, h3("County Comparison Tool - Data View",style='text-align:center'))),
+                                         fluidRow(column(width = 12, "Use the left panel to filter the data.
+                                                         Please note that data are not currently available for every county in every year, and estimates may change as we process more data.",
+                                                         style='font-family:Avenir, Helvetica;font-size:30;text-align:center')),
+                                         fluidRow(box(width = 12, DT::dataTableOutput(ns("fulltable"), height = "70vh")))
+                                ),
+                                ## Map view tab 
+                                tabPanel("Map View",
+                                         fluidRow(column(width = 12, h3("County Comparison Tool - Map View",style='text-align:center'))),
+                                         fluidRow(column(width = 12, "Use the left panel to filter data, and click on the map to switch between locations and trend comparisons.
+                                                         Please note that data are not currently available for every county in every year, and estimates may change as we process more data.",
+                                                         style='font-family:Avenir, Helvetica;font-size:30;text-align:center')),
+                                         fluidRow(column(width = 12, wellPanel(tags$style(HTML(".js-irs-0 .irs-single, .js-irs-0 .irs-bar-edge, .js-irs-0 .irs-bar{
+                                                                         background: #48C9B0;
+                                                                         border-top: 1px solid #48C9B0 ; border-bottom: 1px solid #48C9B0}")),
+                                                                               fluidRow(
+                                                                                 ## data table associated with map 
+                                                                                 box(
+                                                                                   width = 4,
+                                                                                   DT::dataTableOutput(ns("mytable"), height = "60vh")
+                                                                                 ),
+                                                                                 column(
+                                                                                   width = 9,
+                                                                                   ## map 
+                                                                                   box(
+                                                                                     width = 12,
+                                                                                     closable = FALSE,
+                                                                                     collapsible = FALSE,
+                                                                                     actionButton(ns("drill_down"), "Drill Down", icon = icon("arrow-down"), class = "drill-button healthdown-button"),
+                                                                                     actionButton(ns("drill_up"), "Drill Up", icon = icon("arrow-up"), class = "drill-button healthdown-button"),
+                                                                                     leafletOutput(ns("leafdown"), height = "35vh")
+                                                                                   ),
+                                                                                   ## line plot 
+                                                                                   box(
+                                                                                     width = 12,
+                                                                                     closable = FALSE,
+                                                                                     collapsible = FALSE,
+                                                                                     echarts4rOutput(ns("line"), height = "35vh")
+                                                                                   )
+                                                                                 )
+                                                                               )
+                                         )))),
+                                
+                              ))))
+}
+
 
 ###################################### SERVER ###################################### 
 
 mod_healthdown <- function(input, output, session) {
   
-  # Work in progress - trying to limit health vars to only those available in the selected year
-  # observeEvent(c(input$year), {
-  # health_vars_in_year <- reactive({
-  #   if (input$year==2022)
-  #     health_vars 
-  #   else 
-  #     health_vars[! health_vars %in% 'COVID-19 mortality:Death rate']
-  # })
-  # updatePickerInput(session = session, inputId = "prim_var",
-  #                   choices = health_vars_covid)
-  # health_vars_cov
-  # class(health_vars_cov)
+  # # Work in progress - trying to limit health vars to only those available in the selected year
+  # updatePickerInput(session, "year", choices = sort(unique(health_var_yrs$year)))
+  # observeEvent(input$year, {
+  #   health_vars_in_year <- health_var_yrs %>%
+  #     filter(year==input$year) %>% pull(health_vars)
+  #   print(health_vars_in_year)
+  #   updatePickerInput(session, "prim_var", choices = health_vars_in_year)
   # })
   
   my_leafdown <- Leafdown$new(spdfs_list, "leafdown", input)
@@ -243,7 +407,7 @@ mod_healthdown <- function(input, output, session) {
     map_level <- my_leafdown$curr_map_level
     create_mytable(all_data, sel_data, map_level, input$prim_var)
   })
-
+  
   # (Un)select shapes in map when click on table (map view) 
   observeEvent(input$mytable_row_last_clicked, {
     sel_row <- input$mytable_row_last_clicked
@@ -271,129 +435,6 @@ mod_healthdown <- function(input, output, session) {
     DT::datatable(dataFull(), rownames = FALSE)
   })
   
-}
-
-######################################   UI   ###################################### 
-
-mod_healthdown_ui <- function(id) {
-  ns <- NS(id)
-  tagList(useShinyjs(),
-          tags$head(tags$style(type = 'text/css','.navbar-brand{display:none;}'),
-                    tags$style( type = 'text/css',
-                                ".selectize-input { word-wrap : break-word;}
-                            .selectize-input { word-break: break-word;}
-                            .selectize-dropdown {word-wrap : break-word;} "
-                    )),
-          fluidPage(theme = shinytheme("flatly"),
-                    collapsible = TRUE,
-                    "",
-                    ## all of the filtering dropdowns are in the sidebar panel 
-                    sidebarPanel(width = 3,
-                                 h3("Select Data"),
-                                 #h4("SVI Group"),
-                                 div(class = "var-dropdown",
-                                     #selectInput("SVI_Group", "SVI Group",choices=c("low","mid-low","mid-high","high")),
-                                     pickerInput(
-                                       inputId = ns("SVI_Group"),
-                                       label = "SVI Group",
-                                       choices = c("low","mid-low","mid-high","high"),
-                                       selected = all_SVI[1],
-                                       multiple = TRUE,
-                                       #options = pickerOptions(
-                                       #noneSelectedText = NULL
-                                       #width = 'auto'
-                                       #)
-                                     )),
-                                 #h4("Population Size"),
-                                 div(class = "var-dropdown",
-                                     pickerInput(
-                                       inputId = ns("Classification"),
-                                       label = "Population Size",
-                                       choices = all_pop,
-                                       selected = all_pop[1],
-                                       multiple = TRUE
-                                     )),
-                                 #h4("Year"),
-                                 h4("Map View Data"),
-                                 div(class = "var-dropdown",
-                                     #selectInput("year", "Year", choices=all_years, selected = max(all_years))),
-                                     pickerInput(
-                                       inputId = ns("year"),
-                                       label = "Year",
-                                       choices = all_years,
-                                       selected = max(all_years)
-                                     )),
-                                 div(class = "var-dropdown",
-                                     #selectInput("prim_var", "Primary Health Outcome",choices=all_vars, selected = all_vars[1]))
-                                     pickerInput(
-                                       inputId = ns("prim_var"),
-                                       label = "Primary Health Outcome",
-                                       choices = health_vars,
-                                       selected = health_vars[1]
-                                     )),
-                                 div(
-                                   class = "var-dropdown",
-                                   pickerInput(
-                                     inputId = ns("sec_var"),
-                                     label = "Secondary Health Outcome",
-                                     choices = health_vars,
-                                     selected = health_vars[2]
-                                   ))
-                                 # fluidRow(
-                                 #   box(
-                                 #     width = 12,
-                                 #     DT::dataTableOutput(ns("mytable"), height = "50vh")
-                                 #   )),
-                                 
-                    ),
-                    mainPanel(width = 9,
-                              tabsetPanel(
-                                ## County Comparison tab with full table only 
-                                tabPanel("County Comparison Data", 
-                                         fluidRow(column(width = 12, h3("County Comparison Tool - Data View",style='text-align:center'))),
-                                         fluidRow(column(width = 12, "Use the left panel to filter the data.
-                                                         Please note that data are not currently available for every county in every year, and estimates may change as we process more data.",
-                                                         style='font-family:Avenir, Helvetica;font-size:30;text-align:center')),
-                                         fluidRow(box(width = 12, DT::dataTableOutput(ns("fulltable"), height = "70vh")))
-                                ),
-                                ## Map view tab 
-                                tabPanel("Map View",
-                                         fluidRow(column(width = 12, h3("County Comparison Tool - Map View",style='text-align:center'))),
-                                         fluidRow(column(width = 12, "Use the left panel to filter data, and click on the map to switch between locations and trend comparisons.
-                                                         Please note that data are not currently available for every county in every year, and estimates may change as we process more data.",
-                                                         style='font-family:Avenir, Helvetica;font-size:30;text-align:center')),
-                                         fluidRow(column(width = 12, wellPanel(tags$style(HTML(".js-irs-0 .irs-single, .js-irs-0 .irs-bar-edge, .js-irs-0 .irs-bar{
-                                                                         background: #48C9B0;
-                                                                         border-top: 1px solid #48C9B0 ; border-bottom: 1px solid #48C9B0}")),
-                                                                               fluidRow(
-                                                                                 ## data table associated with map 
-                                                                                 box(
-                                                                                   width = 4,
-                                                                                   DT::dataTableOutput(ns("mytable"), height = "60vh")
-                                                                                 ),
-                                                                                 column(
-                                                                                   width = 9,
-                                                                                   ## map 
-                                                                                   box(
-                                                                                     width = 12,
-                                                                                     closable = FALSE,
-                                                                                     collapsible = FALSE,
-                                                                                     actionButton(ns("drill_down"), "Drill Down", icon = icon("arrow-down"), class = "drill-button healthdown-button"),
-                                                                                     actionButton(ns("drill_up"), "Drill Up", icon = icon("arrow-up"), class = "drill-button healthdown-button"),
-                                                                                     leafletOutput(ns("leafdown"), height = "35vh")
-                                                                                   ),
-                                                                                   ## line plot 
-                                                                                   box(
-                                                                                     width = 12,
-                                                                                     closable = FALSE,
-                                                                                     collapsible = FALSE,
-                                                                                     echarts4rOutput(ns("line"), height = "35vh")
-                                                                                   )
-                                                                                 )
-                                                                               )
-                                         )))),
-                                
-                              ))))
 }
 
 shinyApp(mod_healthdown_ui, mod_healthdown)

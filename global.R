@@ -26,6 +26,7 @@ library(stringr)
 # source("healthdown/healthdown_ui.R")
 
 source("healthdown/helpers/line_graph.R")
+source("healthdown/helpers/line_graph_full.R")
 source("healthdown/helpers/utils.R")
 source("healthdown/helpers/table.R")
 # unused plot function files
@@ -191,19 +192,30 @@ mod_healthdown_ui <- function(id) {
                     sidebarPanel(width = 3,
                                  h3("Select Data"),
                                  #h4("SVI Group"),
-                                 div(class = "var-dropdown",
-                                     #selectInput("SVI_Group", "SVI Group",choices=c("low","mid-low","mid-high","high")),
-                                     pickerInput(
-                                       inputId = ns("SVI_Group"),
-                                       label = "SVI Group",
-                                       choices = c("low","mid-low","mid-high","high"),
-                                       selected = all_SVI[1],
-                                       multiple = TRUE,
-                                       #options = pickerOptions(
-                                       #noneSelectedText = NULL
-                                       #width = 'auto'
-                                       #)
-                                     )),
+                                 fluidRow(column(10,
+                                                 div(class = "var-dropdown",
+                                                     #selectInput("SVI_Group", "SVI Group",choices=c("low","mid-low","mid-high","high")),
+                                                     pickerInput(
+                                                       inputId = ns("SVI_Group"),
+                                                       label = "SVI Group",
+                                                       choices = c("low","mid-low","mid-high","high"),
+                                                       selected = all_SVI[1],
+                                                       multiple = TRUE,
+                                                       #options = pickerOptions(
+                                                       #noneSelectedText = NULL
+                                                       #width = 'auto'
+                                                       #)
+                                     ))),
+                                            column(2, 
+                                                   dropMenu(
+                                              circleButton(label = "What is SVI?","What is SVI?", inputId='sviinfo',icon = icon('info'), size="xs"),
+                                              h4(strong('SVI')),
+                                              h5('The Social Vulnerability Index (SVI) is a summary measure that ranks counties on 16 social factors 
+                                                 to indicate community wellbeing and resilience.'),
+                                              placement = "bottom",
+                                              arrow = TRUE,
+                                              style='text-align:center'))),
+                                 
                                  #h4("Population Size"),
                                  div(class = "var-dropdown",
                                      pickerInput(
@@ -241,6 +253,7 @@ mod_healthdown_ui <- function(id) {
                                      choices = sort(unique(health_var_yrs$health_vars)),
                                      selected = sort(unique(health_var_yrs$health_vars))[2]
                                    ))
+                                 # for when data table was in the side panel with filters - now in main panel 
                                  # fluidRow(
                                  #   box(
                                  #     width = 12,
@@ -256,8 +269,25 @@ mod_healthdown_ui <- function(id) {
                                          fluidRow(column(width = 12, "Use the left panel to filter the data.
                                                          Please note that data are not currently available for every county in every year, and estimates may change as we process more data.",
                                                          style='font-family:Avenir, Helvetica;font-size:30;text-align:center')),
-                                         fluidRow(box(width = 12, DT::dataTableOutput(ns("fulltable"), height = "70vh")))
-                                ),
+                                         fluidRow(column(width = 12, wellPanel(tags$style(HTML(".js-irs-0 .irs-single, .js-irs-0 .irs-bar-edge, .js-irs-0 .irs-bar{
+                                                                         background: #48C9B0;
+                                                                         border-top: 1px solid #48C9B0 ; border-bottom: 1px solid #48C9B0}")),
+                                                                               fluidRow(
+                                                                                 box(
+                                                                                   width = 12, 
+                                                                                   DT::dataTableOutput(ns("fulltable"), 
+                                                                                                       height = "45vh"))),
+                                                                               ## line plot 
+                                                                               fluidRow(
+                                                                                 box(
+                                                                                 width = 12,
+                                                                                 closable = FALSE,
+                                                                                 collapsible = FALSE,
+                                                                                 echarts4rOutput(ns("lineFull"), height = "35vh")
+                                                                               )) 
+                                         )))
+                                ), # close county comparison tab panel
+                                
                                 ## Map view tab 
                                 tabPanel("Map View",
                                          fluidRow(column(width = 12, h3("County Comparison Tool - Map View",style='text-align:center'))),
@@ -271,7 +301,7 @@ mod_healthdown_ui <- function(id) {
                                                                                  ## data table associated with map 
                                                                                  box(
                                                                                    width = 4,
-                                                                                   DT::dataTableOutput(ns("mytable"), height = "60vh")
+                                                                                   DT::dataTableOutput(ns("mytable"), height = "55vh")
                                                                                  ),
                                                                                  column(
                                                                                    width = 9,
@@ -289,11 +319,12 @@ mod_healthdown_ui <- function(id) {
                                                                                      width = 12,
                                                                                      closable = FALSE,
                                                                                      collapsible = FALSE,
-                                                                                     echarts4rOutput(ns("line"), height = "35vh")
+                                                                                     echarts4rOutput(ns("line"), height = "30vh")
                                                                                    )
                                                                                  )
                                                                                )
-                                         )))),
+                                         )))
+                                         ), # close map view tab panel 
                                 
                               ))))
 }
@@ -312,6 +343,8 @@ mod_healthdown <- function(input, output, session) {
   #   updatePickerInput(session, "prim_var", choices = health_vars_in_year)
   # })
   
+  
+  # make leafdown map object 
   my_leafdown <- Leafdown$new(spdfs_list, "leafdown", input)
   
   rv <- reactiveValues()
@@ -385,21 +418,6 @@ mod_healthdown <- function(input, output, session) {
       )
   })
   
-  # line plot
-  output$line <- renderEcharts4r({
-    create_line_graph(us_health_all, my_leafdown$curr_sel_data(), input$prim_var) #, input$sec_var)
-  })
-  
-  # # scatter plot - not used 
-  # output$scatter <- renderEcharts4r({
-  #   create_scatter_plot(my_leafdown$curr_sel_data(), input$prim_var, input$sec_var)
-  # })
-  # 
-  # # bar plot - not used
-  # output$bar <- renderEcharts4r({
-  #   create_bar_chart(my_leafdown$curr_sel_data(), input$prim_var)
-  # })
-  
   # map view tab table 
   output$mytable <- DT::renderDataTable({
     all_data <- data()
@@ -415,8 +433,9 @@ mod_healthdown <- function(input, output, session) {
     my_leafdown$toggle_shape_select(sel_shape_id)
   })
   
+  
   # reactive data for full county comparison table - this one filters by all selections 
-  dataFull <- reactive({
+  data_full <- reactive({
     dataFull <- us_health_counties1
     dataFull_year <- subset(dataFull, year == input$year)
     dataFull_year_SVI <- subset(dataFull_year, SVI_Group == input$SVI_Group)
@@ -432,8 +451,38 @@ mod_healthdown <- function(input, output, session) {
   
   # full table for comparison tab 
   output$fulltable <- DT::renderDataTable({
-    DT::datatable(dataFull(), rownames = FALSE)
+    DT::datatable(data_full(), rownames = FALSE)
   })
+  
+  # get rows for comparison tab line plot 
+  row_data <- eventReactive(input$fulltable_rows_selected, {
+    sel_rows <- input$fulltable_rows_selected
+    rowData <- data_full()[sel_rows,]
+    rowData <- dplyr::rename(rowData, NAME_2 = County)
+    rownames(rowData) <- NULL
+    print(rowData)
+    rowData
+  })
+  
+  # line plot - map view tab 
+  output$line <- renderEcharts4r({
+    create_line_graph(us_health_all, my_leafdown$curr_sel_data(), input$prim_var) #, input$sec_var)
+  })
+  
+  # line plot - full county comparison tab
+  output$lineFull <- renderEcharts4r({
+    create_line_graph_full(us_health_all, row_data(), input$prim_var) #, input$sec_var)
+  })
+  
+  # # scatter plot - not used 
+  # output$scatter <- renderEcharts4r({
+  #   create_scatter_plot(my_leafdown$curr_sel_data(), input$prim_var, input$sec_var)
+  # })
+  # 
+  # # bar plot - not used
+  # output$bar <- renderEcharts4r({
+  #   create_bar_chart(my_leafdown$curr_sel_data(), input$prim_var)
+  # })
   
 }
 

@@ -334,14 +334,14 @@ mod_healthdown_ui <- function(id) {
 
 mod_healthdown <- function(input, output, session) {
   
-  # # Work in progress - trying to limit health vars to only those available in the selected year
-  # updatePickerInput(session, "year", choices = sort(unique(health_var_yrs$year)))
-  # observeEvent(input$year, {
-  #   health_vars_in_year <- health_var_yrs %>%
-  #     filter(year==input$year) %>% pull(health_vars)
-  #   print(health_vars_in_year)
-  #   updatePickerInput(session, "prim_var", choices = health_vars_in_year)
-  # })
+  # Work in progress - trying to limit health vars to only those available in the selected year
+  updatePickerInput(session, "year", choices = sort(unique(health_var_yrs$year)))
+  observeEvent(input$year, {
+    health_vars_in_year <- health_var_yrs %>%
+      filter(year==input$year) %>% pull(health_vars)
+    print(health_vars_in_year)
+    updatePickerInput(session, "prim_var", choices = health_vars_in_year) # this line isn't working for some reason
+  })
   
   
   # make leafdown map object 
@@ -460,7 +460,7 @@ mod_healthdown <- function(input, output, session) {
     rowData <- data_full()[sel_rows,]
     rowData <- dplyr::rename(rowData, NAME_2 = County)
     rownames(rowData) <- NULL
-    print(rowData)
+    #print(rowData) #checking
     rowData
   })
   

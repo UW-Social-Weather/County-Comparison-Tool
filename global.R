@@ -266,7 +266,7 @@ mod_healthdown_ui <- function(id) {
                                 ## County Comparison tab with full table only 
                                 tabPanel("County Comparison Data", 
                                          fluidRow(column(width = 12, h3("County Comparison Tool - Data View",style='text-align:center'))),
-                                         fluidRow(column(width = 12, "Use the left panel to filter the data.
+                                         fluidRow(column(width = 12, "Use the left panel to filter the data. Click on a row in the table to see the county time trend in the line plot below. 
                                                          Please note that data are not currently available for every county in every year, and estimates may change as we process more data.",
                                                          style='font-family:Avenir, Helvetica;font-size:30;text-align:center')),
                                          fluidRow(column(width = 12, wellPanel(tags$style(HTML(".js-irs-0 .irs-single, .js-irs-0 .irs-bar-edge, .js-irs-0 .irs-bar{

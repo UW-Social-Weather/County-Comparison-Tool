@@ -1,0 +1,80 @@
+/*--------------------------------------------------------------
+	Defining simpler style sheet
+--------------------------------------------------------------*/
+body {
+    font-family: "Helvetica Nue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.42857413;
+    color: #333;
+    background-color:#FFF;
+    display:block;
+    margin:0;
+}
+
+.header-root {
+    padding-left:20px;
+    padding-right: 20px;
+}
+
+.navbar {
+    margin-bottom: 0;
+    font-family: 'Poppins';
+    font-size: 15px;
+}
+
+.navbar a {
+    color: #63666a;
+}
+
+.main-navbar {
+    margin-top: 35px;
+}
+
+.navbar-brand img {
+    width: 250px;
+}
+
+.social-links {
+    display: flex !important;
+    padding-left: 8px;
+}
+
+.content {
+    padding-top: 30px;
+}
+
+.footer-root {
+    background-color: #F3F6F6 ;
+    display: flex;
+    flex-direction: column;
+    font-family: "Poppins", sans-serif;
+    margin-top: 20px;
+}
+
+.footer-root h4 {
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 500;
+    margin-bottom: 30px;
+    font-size: 22px;
+}
+
+.footer-upper {
+    padding: 45px 50px;
+    border-bottom: 1px solid #63666a;
+    line-height: 180%;
+}
+
+.footer-upper ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.footer-upper a {
+    text-decoration: underline;
+    color: #63666a;
+}
+
+footer .footer-lower {
+    padding: 20px 50px;
+    
+}

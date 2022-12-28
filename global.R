@@ -179,13 +179,7 @@ health_var_yrs <- rbind(health_vars_2011, health_vars_2012, health_vars_2013, he
 mod_healthdown_ui <- function(id) {
   ns <- NS(id)
   tagList(useShinyjs(),
-          tags$head(tags$style(type = 'text/css','.navbar-brand{display:none;}'),
-                    tags$style( type = 'text/css',
-                                ".selectize-input { word-wrap : break-word;}
-                            .selectize-input { word-break: break-word;}
-                            .selectize-dropdown {word-wrap : break-word;} "
-                    )),
-          fluidPage(theme = shinytheme("flatly"),
+          fluidPage(
                     collapsible = TRUE,
                     "",
                     ## all of the filtering dropdowns are in the sidebar panel 
@@ -269,10 +263,7 @@ mod_healthdown_ui <- function(id) {
                                          fluidRow(column(width = 12, "Use the left panel to filter the data. Click on a row in the table to see the county time trend in the line plot below. 
                                                          Please note that data are not currently available for every county in every year, and estimates may change as we process more data.",
                                                          style='font-family:Avenir, Helvetica;font-size:30;text-align:center')),
-                                         fluidRow(column(width = 12, wellPanel(tags$style(HTML(".js-irs-0 .irs-single, .js-irs-0 .irs-bar-edge, .js-irs-0 .irs-bar{
-                                                                         background: #48C9B0;
-                                                                         border-top: 1px solid #48C9B0 ; border-bottom: 1px solid #48C9B0}")),
-                                                                               fluidRow(
+                                         fluidRow(column(width = 12, wellPanel(fluidRow(
                                                                                  box(
                                                                                    width = 12, 
                                                                                    DT::dataTableOutput(ns("fulltable"), 
@@ -294,17 +285,14 @@ mod_healthdown_ui <- function(id) {
                                          fluidRow(column(width = 12, "Use the left panel to filter data, and click on the map to switch between locations and trend comparisons.
                                                          Please note that data are not currently available for every county in every year, and estimates may change as we process more data.",
                                                          style='font-family:Avenir, Helvetica;font-size:30;text-align:center')),
-                                         fluidRow(column(width = 12, wellPanel(tags$style(HTML(".js-irs-0 .irs-single, .js-irs-0 .irs-bar-edge, .js-irs-0 .irs-bar{
-                                                                         background: #48C9B0;
-                                                                         border-top: 1px solid #48C9B0 ; border-bottom: 1px solid #48C9B0}")),
-                                                                               fluidRow(
+                                         fluidRow(column(width = 12, wellPanel(fluidRow(
                                                                                  ## data table associated with map 
                                                                                  box(
                                                                                    width = 4,
                                                                                    DT::dataTableOutput(ns("mytable"), height = "55vh")
                                                                                  ),
                                                                                  column(
-                                                                                   width = 9,
+                                                                                   width = 8,
                                                                                    ## map 
                                                                                    box(
                                                                                      width = 12,
@@ -409,7 +397,7 @@ mod_healthdown <- function(input, output, session) {
       label = labels
     ) %>%
       # set the view to be center on the US
-      setView(-95, 39, 4) %>%
+      setView(-95, 39, 3) %>%
       addLegend(
         pal = fillcolor,
         values = ~ data$y,

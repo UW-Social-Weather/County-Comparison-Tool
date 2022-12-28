@@ -1,0 +1,14 @@
+name: county-comparison-tool
+title: County-Comparison-Tool
+username: frc2
+account: frc2
+server: rsc.csde.washington.edu
+hostUrl: https://rsc.csde.washington.edu/__api__
+appId: 66
+bundleId: 476
+url: https://rsc.csde.washington.edu/content/72927f50-3d4f-4343-b145-add0a248a9a1/
+when: 1672192179.78041
+lastSyncTime: 1672192179.78041
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: mod_countycomparison.R|mod_countycomparison_ui.R|overwrite_join.R

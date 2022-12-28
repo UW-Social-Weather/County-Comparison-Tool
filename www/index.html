@@ -5,18 +5,29 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!--  Document Title============================================= -->
-    <title>COUNTY COMPARISON TOOL</title>
+    <title>County Comparison Tool</title>
     <!-- Shiny added header -->
     {{ headContent() }}
     {{ bootstrapLib() }}
     <!-- Favicons ============================================= -->
-   <link rel="icon" type="image/png" href="assets/images/caduceus_black.png">
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#ffffff">
+   <!--link rel="icon" type="image/png" href="assets/images/social-weather-logo.png"-->
+    <!--link rel="manifest" href="/manifest.json"-->
+    <!--meta name="theme-color" content="#ffffff"-->
     <!--  Stylesheets =============================================-->
-    <!-- Default stylesheets-->
+    <!--Replace the old stylesheets-->
+          
+    <!--link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"-->
+    <!--link href="/css/multiselect.css" rel="stylesheet"-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="./assets/css/new-style-sheet.css">
+
+      <!-- Default stylesheets
     <link href="assets/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Template specific stylesheets-->
+    <-- Template specific stylesheets
     <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:400,700" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Volkhov:400i" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800" rel="stylesheet">
@@ -28,21 +39,63 @@
     <link href="assets/lib/owl.carousel/dist/assets/owl.theme.default.min.css" rel="stylesheet">
     <link href="assets/lib/magnific-popup/dist/magnific-popup.css" rel="stylesheet">
     <link href="assets/lib/simple-text-rotator/simpletextrotator.css" rel="stylesheet">
-    <!-- Main stylesheet and color file-->
+    <--Main stylesheet and color file
     <link href="assets/css/style.css" rel="stylesheet">
     <link href="assets/css/style-custom.css" rel="stylesheet">
     <link href="assets/css/style-app.css" rel="stylesheet">
-    <link id="color-scheme" href="assets/css/colors/default.css" rel="stylesheet">
+    <link id="color-scheme" href="assets/css/colors/default.css" rel="stylesheet"-->
   </head>
   
-  
-  
-   <body data-spy="scroll" data-target=".onpage-navigation" data-offset="60">
+  <body data-spy="scroll" data-target=".onpage-navigation" data-offset="60">
+     <!--add in new header from the online social weather website-->
+     <header class="header-root">
+       <nav class="navbar">
+       <div class="container-fluid">
+         <!-- Brand and toggle get grouped for better mobile display -->
+         <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="https://socialweather.org/">
+              <img alt="Social Weather" src="./assets/images/social-weather-logo.png">
+            </a>
+          </div>
+
+          <!-- Collect the nav links, forms, and other content for toggling -->
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right main-navbar">
+              <li><a href="https://socialweather.org/">Home</a></li>
+              <li><a href="https://socialweather.org/about-us/">About Us</a></li>
+              <li class="dropdown">
+                <a class="dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Current Work <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <li><a class="dropdown-item" href="https://socialweather.org/current-work/">Overview</a></li>
+                  <li><a class="dropdown-item" href="https://socialweather.csde.washington.edu/">Data Sources Database</a></li>
+                </ul>
+              </li>
+              <li><a href="https://socialweather.org/news/">Updates & News</a></li>
+              <li><a href="https://socialweather.org/contact/">Contact</a></li>
+              <li class="social-links">
+                <a href="https://www.facebook.com/SocialWeather.org"><svg height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M504 256C504 119 393 8 256 8S8 119 8 256c0 123.78 90.69 226.38 209.25 245V327.69h-63V256h63v-54.64c0-62.15 37-96.48 93.67-96.48 27.14 0 55.52 4.84 55.52 4.84v61h-31.28c-30.8 0-40.41 19.12-40.41 38.73V256h68.78l-11 71.69h-57.78V501C413.31 482.38 504 379.78 504 256z"></path></svg></a>
+                <a href="https://twitter.com/SocialWeather1"><svg height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"></path></svg></a>
+                <a href="https://www.linkedin.com/company/social-weather"><svg height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"></path></svg></a>
+              </li>
+            </ul>
+          </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+      </nav>
+      </header>
+
     <main>
-      <div class="page-loader">
+      <!--div class="page-loader">
         <div class="loader">Loading...</div>
-      </div>
-      <nav class="navbar navbar-custom navbar-transparent navbar-fixed-top one-page" role="navigation">
+      </div-->
+      <!--nav class="navbar navbar-custom navbar-transparent navbar-fixed-top one-page" role="navigation">
         <div class="container">
           <div class="navbar-header">
               <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#custom-collapse">
@@ -56,7 +109,9 @@
   			        <div style="float:left;">COUNTY COMPARISON</div>
   			      </a>
           </div>
+          
           <div class="collapse navbar-collapse" id="custom-collapse">
+            
             <ul class="nav navbar-nav navbar-right">
               <li><a href="#totop">Home</a></li>
               <li><a class="section-scroll" href="#vision">About</a></li>
@@ -64,7 +119,25 @@
             </ul>
           </div>
         </div>
-      </nav>
+      </nav-->
+
+
+
+      <div class="content">
+
+        <!-- HTML -->
+
+        <h4 style="width: 80%; margin: 0 auto; text-align: center;">Communities often compare themselves to their neighbors. However, neighboring communities may have very 
+        different profiles, from different demographic make-ups to different resources such as food and housing, 
+        social services, and access to healthcare. The County Comparison Tool groups counties by similar demographic 
+        and resource profiles, to help communities make more realistic comparisons. Communities can use this tool to 
+        see how their county compares on several key outcomes to counties that hold a similar “deck of cards.” 
+        These comparisons highlight areas where counties may be doing better or worse than similar counties and 
+        offer more realistic and community-specific ideas on strategies to improve well-being.</h4><br>
+
+        <div></div>
+
+      <!--commenting out this chunk because it's the original black box of text
       <section class="home-section home-full-height bg-dark-90" id="home">
         <div class="titan-caption">
           <div class="caption-content">
@@ -76,16 +149,18 @@
             <a class="section-scroll btn btn-border-w btn-round" href="#app">Try the App</a>
           </div>
         </div>
-      </section>
+      </section-->
+
+      <!-- commenting out this chunhk which is probably not necessary any more
       <div class="main">
         
-        <!-- Vision -->
-        <section class="module pb-0 pt-0 bg-dark-90" id="vision" style="height:100vh;">
+        Vision -->
+        <!--section class="module pb-0 pt-0 bg-dark-90" id="vision" style="height:100vh;">
           <div class="row position-relative m-0">
          
             <div class="col-xs-12 col-md-6 col-md-offset-6">
               <div class="row finance-image-content">
-                <div class="col-md-10 col-md-offset-1 about-text">
+                <--div class="col-md-10 col-md-offset-1 about-text">
                   <h2 class="module-title font-alt align-left">About County Comparison Tool</h2>
                   <div class="row">
                     <div class="col-md-12 col-sm-12 col-xs-12">
@@ -111,7 +186,7 @@
               </div>
             </div>
           </div>
-        </section>
+        </section-->
         
         <!-- WITS - Demo -->
         <section class="module pb-0 pt-0" id="app">
@@ -127,8 +202,12 @@
               </div>
             </div>
           </div>
-        </section>
+        </section-->
+
         
+      </div>
+        
+        <!--commenting out this section to add a new footer
         <section class="module-small bg-dark">
           <div class="container">
             <div class="row">
@@ -154,10 +233,40 @@
               </div>
             </div>
           </div>
-        </section> 
+        <section--> 
       </div>
       <div class="scroll-up"><a href="#totop"><i class="fa fa-angle-double-up"></i></a></div>
     </main>
+    <footer class="footer-root">
+      <div class="footer-upper">
+        <div class="col-md-6">
+          <h4>About Us</h4>
+          <p>Social Weather is a new initiative of the Barnes Family Foundation, in partnership with University of Washington’s Population Health Initiative, that seeks to identify and develop tools, resources, and data to assess, measure, and intervene to improve community well-being.</p>
+        </div>
+        <div class="col-md-3 pl-5" style="padding-left: 5%;">
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="https://socialweather.org/">Home</a></li>
+            <li><a href="https://socialweather.org/about-us/">About Us</a></li>
+            <li><a href="https://socialweather.org/current-work/">Current Work</a></li>
+            <li><a href="https://socialweather.org/news/">Updates & News</a></li>
+            <li><a href="https://socialweather.org/contact/">Contact</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3">
+          <h4>Contact Info</h4>
+          <p>PO Box 1334, Bethlehem, PA 18016</p>
+          <a href="mailto:info@socialweather.org">info@socialweather.org</a>
+        </div>
+      </div>
+      <div class="footer-lower">
+        <div class="col-md-12">
+          Copyright © 2022 Barnes Family Foundation. All Rights Reserved
+        </div>
+      </div>
+    </footer>
+  </div>
+  
     <!-- JavaScripts ============================================= -->
     <script src="assets/lib/wow/dist/wow.js"></script>
     <script src="assets/lib/jquery.mb.ytplayer/dist/jquery.mb.YTPlayer.js"></script>
